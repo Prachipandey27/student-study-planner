@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+StudyTrack | Plan Smarter
+{% endblock %}
+
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-glow hero-glow-one"></div>
+    <div class="hero-glow hero-glow-two"></div>
+
+    <div class="hero-container">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Your academic command centre
+            </div>
+
+            <h1>
+                Turn your study plans into
+                <span>real progress.</span>
+            </h1>
+
+            <p class="hero-description">
+                Organise subjects, manage study tasks,
+                track attendance, monitor marks and discover
+                exactly where your attention is needed.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a
+    href="{{ url_for('signup') }}"
+    class="primary-button"
+>
+                    Start Planning
+                    <span>→</span>
+                </a>
+
+                <a href="#features" class="secondary-button">
+                    Explore Features
+                </a>
+
+            </div>
+
+
+            <div class="hero-trust">
+
+                <div class="trust-item">
+                    <strong>01</strong>
+                    <span>Plan</span>
+                </div>
+
+                <div class="trust-line"></div>
+
+                <div class="trust-item">
+                    <strong>02</strong>
+                    <span>Track</span>
+                </div>
+
+                <div class="trust-line"></div>
+
+                <div class="trust-item">
+                    <strong>03</strong>
+                    <span>Improve</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-visual">
+
+            <div class="dashboard-preview">
+
+                <div class="preview-header">
+
+                    <div>
+                        <span class="preview-label">
+                            Academic Overview
+                        </span>
+
+                        <h3>Good morning, Student</h3>
+                    </div>
+
+                    <div class="profile-circle">
+                        ST
+                    </div>
+
+                </div>
+
+
+                <div class="preview-stats">
+
+                    <div class="mini-stat">
+                        <div class="mini-icon purple">
+                            ↑
+                        </div>
+
+                        <div>
+                            <span>Study Hours</span>
+                            <strong>32.5h</strong>
+                        </div>
+                    </div>
+
+
+                    <div class="mini-stat">
+                        <div class="mini-icon green">
+                            ✓
+                        </div>
+
+                        <div>
+                            <span>Attendance</span>
+                            <strong>86%</strong>
+                        </div>
+                    </div>
+
+
+                    <div class="mini-stat">
+                        <div class="mini-icon orange">
+                            ★
+                        </div>
+
+                        <div>
+                            <span>Average</span>
+                            <strong>78%</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="chart-card">
+
+                    <div class="chart-heading">
+
+                        <div>
+                            <span>Performance</span>
+                            <strong>Subject Overview</strong>
+                        </div>
+
+                        <span class="chart-status">
+                            This Month
+                        </span>
+
+                    </div>
+
+
+                    <div class="fake-chart">
+
+                        <div
+                            class="chart-column"
+                            style="--height: 62%;"
+                        >
+                            <span></span>
+                            <small>DBMS</small>
+                        </div>
+
+                        <div
+                            class="chart-column"
+                            style="--height: 85%;"
+                        >
+                            <span></span>
+                            <small>Python</small>
+                        </div>
+
+                        <div
+                            class="chart-column warning"
+                            style="--height: 48%;"
+                        >
+                            <span></span>
+                            <small>STQA</small>
+                        </div>
+
+                        <div
+                            class="chart-column"
+                            style="--height: 72%;"
+                        >
+                            <span></span>
+                            <small>Stats</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="priority-preview">
+
+                    <div class="priority-icon">
+                        !
+                    </div>
+
+                    <div>
+                        <span>Needs Attention</span>
+                        <strong>STQA</strong>
+
+                        <p>
+                            Increase study time this week.
+                        </p>
+                    </div>
+
+                    <span class="high-badge">
+                        High
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="features-section" id="features">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            Everything in one place
+        </span>
+
+        <h2>
+            Studying becomes easier when
+            your progress is visible.
+        </h2>
+
+        <p>
+            StudyTrack connects your planning,
+            academic records and performance insights
+            into one organised dashboard.
+        </p>
+
+    </div>
+
+
+    <div class="feature-grid">
+
+        <article class="feature-card feature-card-large">
+
+            <div class="feature-number">
+                01
+            </div>
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            <h3>Smart Study Planner</h3>
+
+            <p>
+                Organise assignments, revision sessions
+                and deadlines with priorities and
+                completion tracking.
+            </p>
+
+            <div class="task-preview">
+
+                <div>
+                    <span class="task-check"></span>
+
+                    <div>
+                        <strong>Flask Assignment</strong>
+                        <small>Python · Today</small>
+                    </div>
+                </div>
+
+                <span class="task-priority">
+                    High
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <article class="feature-card">
+
+            <div class="feature-number">
+                02
+            </div>
+
+            <div class="feature-icon">
+                ↗
+            </div>
+
+            <h3>Performance Insights</h3>
+
+            <p>
+                Convert marks and attendance into
+                meaningful visual performance insights.
+            </p>
+
+        </article>
+
+
+        <article class="feature-card">
+
+            <div class="feature-number">
+                03
+            </div>
+
+            <div class="feature-icon">
+                ◷
+            </div>
+
+            <h3>Study Hour Tracking</h3>
+
+            <p>
+                Record your study sessions and understand
+                where your time is actually going.
+            </p>
+
+        </article>
+
+
+        <article class="feature-card">
+
+            <div class="feature-number">
+                04
+            </div>
+
+            <div class="feature-icon">
+                !
+            </div>
+
+            <h3>Priority Recommendations</h3>
+
+            <p>
+                Identify subjects requiring attention
+                based on marks, attendance, study time
+                and pending work.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<section
+    class="how-section"
+    id="how-it-works"
+>
+
+    <div class="how-content">
+
+        <span class="section-label">
+            How it works
+        </span>
+
+        <h2>
+            Your academic progress,
+            simplified.
+        </h2>
+
+
+        <div class="steps">
+
+            <div class="step">
+
+                <span>1</span>
+
+                <div>
+                    <h3>Create your account</h3>
+
+                    <p>
+                        Your academic information remains
+                        connected to your own student profile.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <span>2</span>
+
+                <div>
+                    <h3>Add your academic data</h3>
+
+                    <p>
+                        Add subjects, tasks, study sessions,
+                        marks and attendance.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <span>3</span>
+
+                <div>
+                    <h3>Understand your performance</h3>
+
+                    <p>
+                        Visual dashboards help you discover
+                        strengths and areas requiring attention.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="cta-card">
+
+        <span>Ready to study smarter?</span>
+
+        <h2>
+            Make every study hour count.
+        </h2>
+
+        <p>
+            One dashboard for planning,
+            progress and better decisions.
+        </p>
+
+        <a
+    href="{{ url_for('signup') }}"
+    class="cta-button"
+>
+            Create Free Account →
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

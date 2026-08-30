@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Create Account | StudyTrack
+{% endblock %}
+
+
+{% block content %}
+
+<section class="auth-page">
+
+    <div class="auth-container">
+
+        <div class="auth-info">
+
+            <a href="{{ url_for('home') }}" class="auth-brand">
+
+                <span class="logo-icon">
+                    S
+                </span>
+
+                <span>
+                    StudyTrack
+                </span>
+
+            </a>
+
+
+            <div class="auth-copy">
+
+                <span class="auth-label">
+                    Your academic workspace
+                </span>
+
+                <h1>
+                    Build better study habits.
+                    <span>See the difference.</span>
+                </h1>
+
+                <p>
+                    Bring your subjects, study plans,
+                    marks, attendance and progress together
+                    in one organised space.
+                </p>
+
+
+                <div class="auth-benefits">
+
+                    <div>
+                        <span>✓</span>
+
+                        <div>
+                            <strong>
+                                Plan with clarity
+                            </strong>
+
+                            <p>
+                                Keep tasks and deadlines
+                                organised.
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <span>✓</span>
+
+                        <div>
+                            <strong>
+                                Understand performance
+                            </strong>
+
+                            <p>
+                                Track marks, attendance
+                                and study time.
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <span>✓</span>
+
+                        <div>
+                            <strong>
+                                Know what needs attention
+                            </strong>
+
+                            <p>
+                                Identify subjects that
+                                require more focus.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="auth-form-section">
+
+            <div class="auth-form-wrapper">
+
+                <div class="auth-form-heading">
+
+                    <span class="auth-small-label">
+                        GET STARTED
+                    </span>
+
+                    <h2>
+                        Create your account
+                    </h2>
+
+                    <p>
+                        Start organising your academic
+                        progress in minutes.
+                    </p>
+
+                </div>
+
+
+                {% with messages = get_flashed_messages(
+                    with_categories=true
+                ) %}
+
+                    {% if messages %}
+
+                        {% for category, message in messages %}
+
+                            <div
+                                class="flash-message {{ category }}"
+                            >
+                                <span>
+                                    {% if category == "success" %}
+                                        ✓
+                                    {% else %}
+                                        !
+                                    {% endif %}
+                                </span>
+
+                                {{ message }}
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                {% endwith %}
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for('signup') }}"
+                    class="auth-form"
+                >
+
+                    <div class="form-group">
+
+                        <label for="full_name">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="full_name"
+                            name="full_name"
+                            placeholder="Enter your full name"
+                            value="{{ request.form.get('full_name', '') }}"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            value="{{ request.form.get('email', '') }}"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="password-field">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Minimum 8 characters"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-password-target="password"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="confirm_password">
+                            Confirm Password
+                        </label>
+
+                        <div class="password-field">
+
+                            <input
+                                type="password"
+                                id="confirm_password"
+                                name="confirm_password"
+                                placeholder="Enter password again"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-password-target="confirm_password"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="auth-submit-button"
+                    >
+                        Create Account
+
+                        <span>
+                            →
+                        </span>
+                    </button>
+
+
+                </form>
+
+
+                <div class="auth-divider">
+
+                    <span></span>
+
+                    <p>
+                        Already have an account?
+                    </p>
+
+                    <span></span>
+
+                </div>
+
+
+                <a
+    href="{{ url_for('login') }}"
+    class="auth-secondary-button"
+>
+    Log in to StudyTrack
+</a>
+
+
+                <p class="auth-terms">
+                    By creating an account, you agree
+                    to use StudyTrack responsibly for
+                    academic planning.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

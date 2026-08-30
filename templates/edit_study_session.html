@@ -1,0 +1,419 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Edit Study Session | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Edit Study Session
+{% endblock %}
+
+
+{% block content %}
+
+<section class="subject-form-page">
+
+
+    <div class="subject-form-header">
+
+        <div>
+
+            <a
+                href="{{ url_for('study_log') }}"
+                class="back-link"
+            >
+                ← Back to Study Log
+            </a>
+
+
+            <span class="dashboard-eyebrow">
+                STUDY LOG
+            </span>
+
+
+            <h1>
+                Edit study session
+            </h1>
+
+
+            <p>
+                Correct the subject, study date,
+                duration or notes for this session.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="subject-form-layout">
+
+
+        <div class="subject-form-card">
+
+
+            <div class="subject-form-card-header">
+
+                <div class="form-header-icon">
+                    ✎
+                </div>
+
+                <div>
+
+                    <h2>
+                        Session Details
+                    </h2>
+
+                    <p>
+                        Update this existing study entry.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'edit_study_session',
+                    session_id=session.id
+                ) }}"
+                class="subject-form"
+            >
+
+
+                <!-- SUBJECT -->
+
+                <div class="subject-form-group">
+
+                    <label for="subject_id">
+                        Subject
+                        <span>*</span>
+                    </label>
+
+
+                    {% set selected_subject =
+                        request.form.get(
+                            'subject_id',
+                            session.subject_id
+                        ) | int
+                    %}
+
+
+                    <select
+                        id="subject_id"
+                        name="subject_id"
+                        class="studytrack-select"
+                        required
+                    >
+
+                        {% for subject in subjects %}
+
+                            <option
+                                value="{{ subject.id }}"
+
+                                {% if
+                                    selected_subject
+                                    == subject.id
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ subject.name }}
+
+                                {% if subject.code %}
+                                    ({{ subject.code }})
+                                {% endif %}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- DATE -->
+
+                <div class="subject-form-group">
+
+                    <label for="study_date">
+                        Study Date
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="study_date"
+                        name="study_date"
+                        max="{{ today.isoformat() }}"
+                        value="{{ request.form.get(
+                            'study_date',
+                            session.study_date.isoformat()
+                        ) }}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- DURATION -->
+
+                <div class="subject-form-group">
+
+                    <label>
+                        Study Duration
+                        <span>*</span>
+                    </label>
+
+
+                    <div class="study-duration-grid">
+
+
+                        <div>
+
+                            <label
+                                for="hours"
+                                class="duration-mini-label"
+                            >
+                                Hours
+                            </label>
+
+
+                            <div class="input-with-suffix">
+
+                                <input
+                                    type="number"
+                                    id="hours"
+                                    name="hours"
+                                    min="0"
+                                    max="24"
+                                    value="{{ request.form.get(
+                                        'hours',
+                                        session.duration_minutes // 60
+                                    ) }}"
+                                    required
+                                >
+
+                                <span>
+                                    hrs
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div>
+
+                            <label
+                                for="minutes"
+                                class="duration-mini-label"
+                            >
+                                Minutes
+                            </label>
+
+
+                            <div class="input-with-suffix">
+
+                                <input
+                                    type="number"
+                                    id="minutes"
+                                    name="minutes"
+                                    min="0"
+                                    max="59"
+                                    value="{{ request.form.get(
+                                        'minutes',
+                                        session.duration_minutes % 60
+                                    ) }}"
+                                    required
+                                >
+
+                                <span>
+                                    min
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- NOTES -->
+
+                <div class="subject-form-group">
+
+                    <label for="notes">
+                        Study Notes
+                    </label>
+
+
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        maxlength="300"
+                        class="study-session-textarea"
+                    >{{ request.form.get(
+                        'notes',
+                        session.notes or ''
+                    ) }}</textarea>
+
+
+                    <small>
+                        Optional, maximum 300 characters.
+                    </small>
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="subject-form-actions">
+
+
+                    <a
+                        href="{{ url_for('study_log') }}"
+                        class="form-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="form-save-button"
+                    >
+
+                        Save Changes
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+
+        <aside class="subject-form-guide">
+
+            <span class="guide-label">
+                CORRECT YOUR LOG
+            </span>
+
+
+            <h2>
+                Accurate study data creates better insights.
+            </h2>
+
+
+            <p>
+                If a duration, subject or date was
+                entered incorrectly, update it here
+                before StudyTrack uses the data in
+                future analytics.
+            </p>
+
+
+            <div class="guide-items">
+
+
+                <div>
+
+                    <span class="guide-number">
+                        01
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Fix duration
+                        </strong>
+
+                        <p>
+                            Keep your recorded study
+                            time accurate.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="guide-number">
+                        02
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Correct subject
+                        </strong>
+
+                        <p>
+                            Make sure study time is
+                            assigned to the right subject.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="guide-number">
+                        03
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Improve notes
+                        </strong>
+
+                        <p>
+                            Record what you actually
+                            covered during the session.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,816 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Dashboard | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+<section class="live-dashboard-page">
+
+
+    <!-- =====================================
+         DASHBOARD HEADER
+    ====================================== -->
+
+    <div class="live-dashboard-header">
+
+        <div>
+
+            <span class="dashboard-eyebrow">
+                STUDENT OVERVIEW
+            </span>
+
+            <h1>
+                Welcome back,
+                {{ current_user.full_name.split()[0] }}
+            </h1>
+
+            <p>
+                Here's a snapshot of your current
+                study plan and academic workspace.
+            </p>
+
+        </div>
+
+
+        <div class="live-dashboard-date">
+
+            <span>
+                TODAY
+            </span>
+
+            <strong id="dashboardDate">
+                {{ today.strftime('%d %b %Y') }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         MAIN STAT CARDS
+    ====================================== -->
+
+    <div class="live-stat-grid">
+
+
+        <!-- SUBJECTS -->
+
+        <article class="live-stat-card">
+
+            <div class="live-stat-icon purple">
+                S
+            </div>
+
+
+            <div class="live-stat-content">
+
+                <span>
+                    Total Subjects
+                </span>
+
+                <strong>
+                    {{ total_subjects }}
+                </strong>
+
+                <small>
+                    Active academic subjects
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- STUDY THIS WEEK -->
+
+        <article class="live-stat-card">
+
+            <div class="live-stat-icon blue">
+                ◷
+            </div>
+
+
+            <div class="live-stat-content">
+
+                <span>
+                    Study This Week
+                </span>
+
+                <strong>
+                    {{ dashboard_week_hours }}h
+                </strong>
+
+                <small>
+                    Logged study time this week
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- PERFORMANCE -->
+
+        <article class="live-stat-card">
+
+            <div class="live-stat-icon green">
+                %
+            </div>
+
+
+            <div class="live-stat-content">
+
+                <span>
+                    Performance
+                </span>
+
+                <strong>
+                    {{ dashboard_performance }}%
+                </strong>
+
+                <small>
+                    Overall academic score
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- ATTENDANCE -->
+
+        <article class="live-stat-card">
+
+            <div class="live-stat-icon orange">
+                ✓
+            </div>
+
+
+            <div class="live-stat-content">
+
+                <span>
+                    Attendance
+                </span>
+
+                <strong>
+                    {{ dashboard_attendance }}%
+                </strong>
+
+                <small>
+                    {{ dashboard_classes_attended }}
+                    /
+                    {{ dashboard_classes_held }}
+                    classes attended
+                </small>
+
+            </div>
+
+        </article>
+
+
+    </div>
+
+
+
+    <!-- =====================================
+         MIDDLE DASHBOARD
+    ====================================== -->
+
+    <div class="live-dashboard-middle">
+
+
+        <!-- =====================================
+             TASK COMPLETION
+        ====================================== -->
+
+        <section class="dashboard-panel live-progress-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        STUDY PROGRESS
+                    </span>
+
+                    <h2>
+                        Task Completion
+                    </h2>
+
+                </div>
+
+
+                <span class="live-progress-percentage">
+                    {{ completion_rate }}%
+                </span>
+
+            </div>
+
+
+
+            <div class="live-progress-content">
+
+
+                <div
+                    class="live-progress-ring"
+                    style="--task-progress: {{ completion_rate }}%;"
+                >
+
+                    <div>
+
+                        <strong>
+                            {{ completion_rate }}%
+                        </strong>
+
+                        <span>
+                            completed
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="live-progress-details">
+
+
+                    <h3>
+
+                        {% if total_tasks == 0 %}
+
+                            Start planning your study work.
+
+                        {% elif completion_rate == 100 %}
+
+                            All current tasks completed.
+
+                        {% elif completion_rate >= 60 %}
+
+                            You're making strong progress.
+
+                        {% elif completion_rate >= 30 %}
+
+                            Your task list is moving forward.
+
+                        {% else %}
+
+                            Keep working through your plan.
+
+                        {% endif %}
+
+                    </h3>
+
+
+                    <p>
+
+                        {% if total_tasks == 0 %}
+
+                            Create study tasks to begin tracking
+                            your completion progress.
+
+                        {% else %}
+
+                            You have completed
+                            {{ completed_tasks | length }}
+                            of
+                            {{ total_tasks }}
+                            study tasks.
+
+                        {% endif %}
+
+                    </p>
+
+
+
+                    <div class="progress-breakdown">
+
+
+                        <div>
+
+                            <span>
+                                Total
+                            </span>
+
+                            <strong>
+                                {{ total_tasks }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Remaining
+                            </span>
+
+                            <strong>
+                                {{
+                                    pending_tasks | length
+                                    +
+                                    overdue_tasks | length
+                                }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Finished
+                            </span>
+
+                            <strong>
+                                {{ completed_tasks | length }}
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             QUICK ACTIONS
+        ====================================== -->
+
+        <section class="dashboard-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        QUICK ACTIONS
+                    </span>
+
+                    <h2>
+                        Keep Moving
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="live-quick-actions">
+
+
+                <!-- CREATE TASK -->
+
+                <a
+                    href="{{ url_for('add_task') }}"
+                    class="live-quick-action"
+                >
+
+                    <span class="quick-action-live-icon purple">
+                        +
+                    </span>
+
+
+                    <div>
+
+                        <strong>
+                            Create Study Task
+                        </strong>
+
+                        <small>
+                            Plan your next activity
+                        </small>
+
+                    </div>
+
+
+                    <span class="quick-action-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+
+                <!-- LOG STUDY TIME -->
+
+                <a
+                    href="{{ url_for('add_study_session') }}"
+                    class="live-quick-action"
+                >
+
+                    <span class="quick-action-live-icon blue">
+                        ◷
+                    </span>
+
+
+                    <div>
+
+                        <strong>
+                            Log Study Time
+                        </strong>
+
+                        <small>
+                            Record a study session
+                        </small>
+
+                    </div>
+
+
+                    <span class="quick-action-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+
+                <!-- ADD MARKS -->
+
+                <a
+                    href="{{ url_for('add_mark') }}"
+                    class="live-quick-action"
+                >
+
+                    <span class="quick-action-live-icon orange">
+                        %
+                    </span>
+
+
+                    <div>
+
+                        <strong>
+                            Add Marks
+                        </strong>
+
+                        <small>
+                            Record assessment results
+                        </small>
+
+                    </div>
+
+
+                    <span class="quick-action-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+
+                <!-- ADD ATTENDANCE -->
+
+                <a
+                    href="{{ url_for('add_attendance') }}"
+                    class="live-quick-action"
+                >
+
+                    <span class="quick-action-live-icon green">
+                        ✓
+                    </span>
+
+
+                    <div>
+
+                        <strong>
+                            Add Attendance
+                        </strong>
+
+                        <small>
+                            Record class attendance
+                        </small>
+
+                    </div>
+
+
+                    <span class="quick-action-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+
+    <!-- =====================================
+         LOWER DASHBOARD
+    ====================================== -->
+
+    <div class="live-dashboard-lower">
+
+
+        <!-- =====================================
+             UPCOMING TASKS
+        ====================================== -->
+
+        <section class="dashboard-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        UPCOMING
+                    </span>
+
+                    <h2>
+                        Next Tasks
+                    </h2>
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('planner') }}"
+                    class="panel-view-link"
+                >
+                    View Planner
+                </a>
+
+            </div>
+
+
+
+            {% if upcoming_tasks %}
+
+
+                <div class="dashboard-task-list">
+
+
+                    {% for task in upcoming_tasks %}
+
+
+                        <article class="dashboard-task-item">
+
+
+                            <div
+                                class="
+                                    dashboard-priority-dot
+                                    priority-dot-{{ task.priority | lower }}
+                                "
+                            >
+                            </div>
+
+
+
+                            <div class="dashboard-task-information">
+
+                                <strong>
+                                    {{ task.task_name }}
+                                </strong>
+
+
+                                <div>
+
+                                    <span>
+                                        {{ task.subject.name }}
+                                    </span>
+
+                                    <span>
+                                        •
+                                    </span>
+
+                                    <span>
+                                        {{
+                                            task.deadline
+                                            .strftime('%d %b %Y')
+                                        }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <span
+                                class="
+                                    dashboard-priority-label
+                                    dashboard-priority-{{ task.priority | lower }}
+                                "
+                            >
+                                {{ task.priority }}
+                            </span>
+
+
+                        </article>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+
+            {% else %}
+
+
+                <div class="dashboard-live-empty">
+
+                    <div>
+                        ✓
+                    </div>
+
+
+                    <strong>
+                        No upcoming tasks
+                    </strong>
+
+
+                    <p>
+                        Your next pending study tasks
+                        will appear here.
+                    </p>
+
+
+                    <a href="{{ url_for('add_task') }}">
+                        Create a Task
+                    </a>
+
+                </div>
+
+
+            {% endif %}
+
+
+        </section>
+
+
+
+        <!-- =====================================
+             NEEDS ATTENTION
+        ====================================== -->
+
+        <section
+            class="
+                dashboard-panel
+                {% if overdue_tasks %}
+                    attention-panel
+                {% endif %}
+            "
+        >
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span
+                        class="
+                            panel-label
+                            {% if overdue_tasks %}
+                                attention-label
+                            {% endif %}
+                        "
+                    >
+                        NEEDS ATTENTION
+                    </span>
+
+
+                    <h2>
+                        Overdue Tasks
+                    </h2>
+
+                </div>
+
+
+
+                {% if overdue_tasks %}
+
+                    <span class="attention-count">
+                        {{ overdue_tasks | length }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            {% if overdue_tasks %}
+
+
+                <div class="dashboard-attention-list">
+
+
+                    {% for task in overdue_tasks[:3] %}
+
+
+                        <article class="attention-task-item">
+
+
+                            <div class="attention-task-icon">
+                                !
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    {{ task.task_name }}
+                                </strong>
+
+
+                                <p>
+                                    {{ task.subject.name }}
+                                    · Due
+                                    {{
+                                        task.deadline
+                                        .strftime('%d %b %Y')
+                                    }}
+                                </p>
+
+                            </div>
+
+
+                        </article>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+
+
+                <a
+                    href="{{ url_for('planner') }}"
+                    class="attention-view-button"
+                >
+
+                    Review Overdue Tasks
+
+                    <span>
+                        →
+                    </span>
+
+                </a>
+
+
+            {% else %}
+
+
+                <div class="dashboard-live-empty attention-empty">
+
+                    <div>
+                        ✓
+                    </div>
+
+
+                    <strong>
+                        Everything is on track
+                    </strong>
+
+
+                    <p>
+                        You currently have no
+                        overdue study tasks.
+                    </p>
+
+                </div>
+
+
+            {% endif %}
+
+
+        </section>
+
+
+    </div>
+
+
+</section>
+
+{% endblock %}

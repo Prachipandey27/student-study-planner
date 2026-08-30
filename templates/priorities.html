@@ -1,0 +1,409 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Study Priorities | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Study Priorities
+{% endblock %}
+
+
+{% block content %}
+
+<section class="priorities-page">
+
+
+    <!-- HEADER -->
+
+    <div class="priorities-header">
+
+        <div>
+
+            <span class="dashboard-eyebrow">
+                SMART STUDY PLANNING
+            </span>
+
+            <h1>
+                Study Priorities
+            </h1>
+
+            <p>
+                Identify which subjects need attention
+                based on performance, study progress,
+                overdue tasks and attendance.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SUMMARY -->
+
+    <div class="priorities-summary-grid">
+
+
+        <article class="priority-summary-card high">
+
+            <span>
+                High Priority
+            </span>
+
+            <strong>
+                {{ high_count }}
+            </strong>
+
+            <small>
+                Needs immediate attention
+            </small>
+
+        </article>
+
+
+
+        <article class="priority-summary-card medium">
+
+            <span>
+                Medium Priority
+            </span>
+
+            <strong>
+                {{ medium_count }}
+            </strong>
+
+            <small>
+                Needs consistent focus
+            </small>
+
+        </article>
+
+
+
+        <article class="priority-summary-card low">
+
+            <span>
+                Low Priority
+            </span>
+
+            <strong>
+                {{ low_count }}
+            </strong>
+
+            <small>
+                Currently on track
+            </small>
+
+        </article>
+
+
+
+        <article class="priority-summary-card neutral">
+
+            <span>
+                Subjects Analysed
+            </span>
+
+            <strong>
+                {{ subject_count }}
+            </strong>
+
+            <small>
+                Current subjects
+            </small>
+
+        </article>
+
+
+    </div>
+
+
+
+    {% if priority_items %}
+
+
+        <section class="dashboard-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        PRIORITY RANKING
+                    </span>
+
+                    <h2>
+                        Where to Focus Next
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="priority-list">
+
+
+                {% for item in priority_items %}
+
+
+                    <article
+                        class="
+                            priority-subject-card
+                            priority-{{ item.level | lower }}
+                        "
+                    >
+
+
+                        <div class="priority-card-main">
+
+
+                            <div
+                                class="
+                                    priority-rank
+                                    {{ item.level | lower }}
+                                "
+                            >
+                                {{ loop.index }}
+                            </div>
+
+
+                            <div class="priority-subject-info">
+
+
+                                <div class="priority-title-row">
+
+                                    <div>
+
+                                        <h3>
+                                            {{ item.subject.name }}
+                                        </h3>
+
+
+                                        {% if item.subject.code %}
+
+                                            <span>
+                                                {{ item.subject.code }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <span
+                                        class="
+                                            priority-level-badge
+                                            {{ item.level | lower }}
+                                        "
+                                    >
+                                        {{ item.level }} Priority
+                                    </span>
+
+                                </div>
+
+
+
+                                <div class="priority-metrics">
+
+
+                                    <div>
+
+                                        <span>
+                                            Performance
+                                        </span>
+
+                                        <strong>
+
+                                            {% if item.performance is not none %}
+
+                                                {{ item.performance }}%
+
+                                            {% else %}
+
+                                                --
+
+                                            {% endif %}
+
+                                        </strong>
+
+                                    </div>
+
+
+
+                                    <div>
+
+                                        <span>
+                                            Target
+                                        </span>
+
+                                        <strong>
+                                            {{ item.target_marks }}%
+                                        </strong>
+
+                                    </div>
+
+
+
+                                    <div>
+
+                                        <span>
+                                            Study This Week
+                                        </span>
+
+                                        <strong>
+                                            {{ item.week_hours }}h
+                                        </strong>
+
+                                    </div>
+
+
+
+                                    <div>
+
+                                        <span>
+                                            Attendance
+                                        </span>
+
+                                        <strong>
+
+                                            {% if item.attendance is not none %}
+
+                                                {{ item.attendance }}%
+
+                                            {% else %}
+
+                                                --
+
+                                            {% endif %}
+
+                                        </strong>
+
+                                    </div>
+
+
+
+                                    <div>
+
+                                        <span>
+                                            Overdue Tasks
+                                        </span>
+
+                                        <strong>
+                                            {{ item.overdue_count }}
+                                        </strong>
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div class="priority-reasons">
+
+                                    {% for reason in item.reasons %}
+
+                                        <span>
+                                            {{ reason }}
+                                        </span>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="priority-card-side">
+
+
+                            <div
+                                class="
+                                    priority-score
+                                    {{ item.level | lower }}
+                                "
+                            >
+
+                                <strong>
+                                    {{ item.score }}
+                                </strong>
+
+                                <span>
+                                    priority score
+                                </span>
+
+                            </div>
+
+
+                            <a
+                                href="{{ url_for(
+                                    'subject_detail',
+                                    subject_id=item.subject.id
+                                ) }}"
+                            >
+                                Open Subject
+                                →
+                            </a>
+
+
+                        </div>
+
+
+                    </article>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        </section>
+
+
+    {% else %}
+
+
+        <section class="dashboard-panel">
+
+            <div class="priority-empty-state">
+
+                <div>
+                    !
+                </div>
+
+                <h2>
+                    No subjects to analyse.
+                </h2>
+
+                <p>
+                    Add a subject to start generating
+                    study priorities.
+                </p>
+
+                <a href="{{ url_for('add_subject') }}">
+                    Add Subject
+                </a>
+
+            </div>
+
+        </section>
+
+
+    {% endif %}
+
+
+</section>
+
+{% endblock %}

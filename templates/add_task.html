@@ -1,0 +1,498 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Create Task | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Create Study Task
+{% endblock %}
+
+
+{% block content %}
+
+<section class="subject-form-page">
+
+
+    <div class="subject-form-header">
+
+        <div>
+
+            <a
+                href="{{ url_for('planner') }}"
+                class="back-link"
+            >
+                ← Back to Study Planner
+            </a>
+
+
+            <span class="dashboard-eyebrow">
+                STUDY PLANNER
+            </span>
+
+
+            <h1>
+                Create a study task
+            </h1>
+
+
+            <p>
+                Turn upcoming academic work into
+                clear, manageable study actions.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="subject-form-layout">
+
+
+        <!-- FORM -->
+
+        <div class="subject-form-card">
+
+
+            <div class="subject-form-card-header">
+
+                <div class="form-header-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <h2>
+                        Task Details
+                    </h2>
+
+                    <p>
+                        Tell StudyTrack what needs
+                        to be completed.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <form
+                method="POST"
+                action="{{ url_for('add_task') }}"
+                class="subject-form"
+            >
+
+
+                <!-- TASK NAME -->
+
+                <div class="subject-form-group">
+
+                    <label for="task_name">
+                        Task Name
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="task_name"
+                        name="task_name"
+                        maxlength="150"
+                        placeholder="e.g. Complete Flask Assignment"
+                        value="{{ request.form.get('task_name', '') }}"
+                        required
+                    >
+
+                    <small>
+                        Keep the task specific and actionable.
+                    </small>
+
+                </div>
+
+
+
+                <!-- SUBJECT -->
+
+                <div class="subject-form-group">
+
+                    <label for="subject_id">
+                        Subject
+                        <span>*</span>
+                    </label>
+
+
+                    {% set form_subject_id =
+                        request.form.get('subject_id')
+                    %}
+
+
+                    <select
+                        id="subject_id"
+                        name="subject_id"
+                        class="studytrack-select"
+                        required
+                    >
+
+                        <option value="">
+                            Choose a subject
+                        </option>
+
+
+                        {% for subject in subjects %}
+
+                            <option
+                                value="{{ subject.id }}"
+
+                                {% if
+                                    (
+                                        form_subject_id
+                                        and
+                                        form_subject_id | int
+                                        == subject.id
+                                    )
+                                    or
+                                    (
+                                        not form_subject_id
+                                        and
+                                        selected_subject_id
+                                        == subject.id
+                                    )
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ subject.name }}
+
+                                {% if subject.code %}
+                                    ({{ subject.code }})
+                                {% endif %}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+
+                    <small>
+                        Only subjects belonging to your
+                        account are available.
+                    </small>
+
+                </div>
+
+
+
+                <!-- DEADLINE -->
+
+                <div class="subject-form-group">
+
+                    <label for="deadline">
+                        Deadline
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="deadline"
+                        name="deadline"
+                        min="{{ today.isoformat() }}"
+                        value="{{ request.form.get('deadline', '') }}"
+                        required
+                    >
+
+                    <small>
+                        Choose when this task should
+                        be completed.
+                    </small>
+
+                </div>
+
+
+
+                <!-- PRIORITY -->
+
+                <div class="subject-form-group">
+
+                    <label>
+                        Priority
+                        <span>*</span>
+                    </label>
+
+
+                    <div class="priority-options">
+
+
+                        <input
+                            type="radio"
+                            name="priority"
+                            id="priority_high"
+                            value="High"
+                            class="priority-radio"
+
+                            {% if
+                                request.form.get(
+                                    'priority'
+                                ) == 'High'
+                            %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <label
+                            for="priority_high"
+                            class="priority-choice
+                            priority-choice-high"
+                        >
+
+                            <span>
+                                !
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    High
+                                </strong>
+
+                                <small>
+                                    Needs urgent attention
+                                </small>
+
+                            </div>
+
+                        </label>
+
+
+
+                        <input
+                            type="radio"
+                            name="priority"
+                            id="priority_medium"
+                            value="Medium"
+                            class="priority-radio"
+
+                            {% if
+                                request.form.get(
+                                    'priority',
+                                    'Medium'
+                                ) == 'Medium'
+                            %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <label
+                            for="priority_medium"
+                            class="priority-choice
+                            priority-choice-medium"
+                        >
+
+                            <span>
+                                ◷
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Medium
+                                </strong>
+
+                                <small>
+                                    Normal study priority
+                                </small>
+
+                            </div>
+
+                        </label>
+
+
+
+                        <input
+                            type="radio"
+                            name="priority"
+                            id="priority_low"
+                            value="Low"
+                            class="priority-radio"
+
+                            {% if
+                                request.form.get(
+                                    'priority'
+                                ) == 'Low'
+                            %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <label
+                            for="priority_low"
+                            class="priority-choice
+                            priority-choice-low"
+                        >
+
+                            <span>
+                                ✓
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Low
+                                </strong>
+
+                                <small>
+                                    Can be handled later
+                                </small>
+
+                            </div>
+
+                        </label>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BUTTONS -->
+
+                <div class="subject-form-actions">
+
+                    <a
+                        href="{{ url_for('planner') }}"
+                        class="form-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="form-save-button"
+                    >
+
+                        Create Task
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- GUIDE -->
+
+        <aside class="subject-form-guide">
+
+            <span class="guide-label">
+                PLAN WITH PURPOSE
+            </span>
+
+
+            <h2>
+                Break large academic goals into smaller actions.
+            </h2>
+
+
+            <p>
+                Tasks help you see what needs to
+                happen next instead of keeping
+                everything in your head.
+            </p>
+
+
+            <div class="guide-items">
+
+
+                <div>
+
+                    <span class="guide-number">
+                        01
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Be specific
+                        </strong>
+
+                        <p>
+                            "Revise Chapter 4" is clearer
+                            than simply "Study".
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        02
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Set a deadline
+                        </strong>
+
+                        <p>
+                            StudyTrack automatically
+                            identifies overdue work.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        03
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Choose priority
+                        </strong>
+
+                        <p>
+                            Use High only for work that
+                            genuinely needs attention.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+
+</section>
+
+{% endblock %}

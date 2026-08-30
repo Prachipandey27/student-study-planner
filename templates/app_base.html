@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+        StudyTrack
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body class="app-body">
+
+<div class="app-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside
+        class="app-sidebar"
+        id="appSidebar"
+    >
+
+        <div class="sidebar-top">
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="sidebar-brand"
+            >
+
+                <span class="logo-icon">
+                    S
+                </span>
+
+                <span>
+                    StudyTrack
+                </span>
+
+            </a>
+
+
+            <button
+                class="sidebar-close"
+                id="sidebarClose"
+                type="button"
+                aria-label="Close menu"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="sidebar-label">
+            WORKSPACE
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a
+    href="{{ url_for('dashboard') }}"
+    class="sidebar-link
+    {% if request.endpoint == 'dashboard' %}
+        active
+    {% endif %}"
+>
+
+                <span class="sidebar-link-icon">
+                    ◫
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a
+    href="{{ url_for('subjects') }}"
+    class="sidebar-link
+    {% if request.endpoint in [
+        'subjects',
+        'add_subject',
+        'edit_subject',
+        'subject_detail'
+    ] %}
+        active
+    {% endif %}"
+>
+
+                <span class="sidebar-link-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Subjects
+                </span>
+
+            </a>
+
+
+            <a
+    href="{{ url_for('planner') }}"
+    class="sidebar-link
+    {% if request.endpoint in [
+        'planner',
+        'add_task',
+        'edit_task'
+    ] %}
+        active
+    {% endif %}"
+>
+
+                <span class="sidebar-link-icon">
+                    ✓
+                </span>
+
+                <span>
+                    Study Planner
+                </span>
+
+            </a>
+
+
+            <a
+    href="{{ url_for('study_log') }}"
+    class="sidebar-link
+    {% if request.endpoint in [
+    'study_log',
+    'add_study_session',
+    'edit_study_session'
+] %}
+    active
+{% endif %}
+>
+                <span class="sidebar-link-icon">
+                    ◷
+                </span>
+
+                <span>
+                    Study Log
+                </span>
+
+            </a>
+
+
+            <a
+    href="{{ url_for('performance') }}"
+    class="sidebar-link
+    {% if request.endpoint in [
+    'performance',
+    'add_mark',
+    'edit_mark'
+] %}
+    active
+{% endif %}
+>
+
+                <span class="sidebar-link-icon">
+                    ↗
+                </span>
+
+                <span>
+                    Performance
+                </span>
+
+            </a>
+            <a
+    href="{{ url_for('attendance') }}"
+    class="sidebar-link
+    {% if request.endpoint in [
+    'attendance',
+    'add_attendance'
+] %}
+    active
+{% endif %}
+>
+
+    <span class="sidebar-link-icon">
+        ✓
+    </span>
+
+    <span>
+        Attendance
+    </span>
+
+</a>
+
+
+            <a
+    href="{{ url_for('analytics') }}"
+    class="sidebar-link
+    {% if request.endpoint == 'analytics' %}
+        active
+    {% endif %}"
+>
+
+                <span class="sidebar-link-icon">
+                    ◒
+                </span>
+
+                <span>
+                    Analytics
+                </span>
+
+            </a>
+
+
+            <a
+    href="{{ url_for('priorities') }}"
+    class="sidebar-link
+    {% if request.endpoint == 'priorities' %}
+        active
+    {% endif %}"
+>
+
+                <span class="sidebar-link-icon">
+                    !
+                </span>
+
+                <span>
+                    Study Priorities
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="sidebar-user">
+
+                <div class="sidebar-avatar">
+
+                    {{ current_user.full_name[0] | upper }}
+
+                </div>
+
+
+                <div class="sidebar-user-details">
+
+                    <strong>
+                        {{ current_user.full_name }}
+                    </strong>
+
+                    <span>
+                        Student
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="sidebar-logout"
+            >
+                Log Out
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN APPLICATION -->
+
+    <div class="app-main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="app-topbar">
+
+            <button
+                class="mobile-sidebar-button"
+                id="sidebarOpen"
+                type="button"
+                aria-label="Open menu"
+            >
+                ☰
+            </button>
+
+
+            <div class="topbar-page">
+
+                <span>
+                    STUDYTRACK
+                </span>
+
+                <strong>
+                    {% block page_name %}
+                    Dashboard
+                    {% endblock %}
+                </strong>
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+                <div class="topbar-student">
+
+                    <div class="topbar-student-text">
+
+                        <span>
+                            Signed in as
+                        </span>
+
+                        <strong>
+                            {{ current_user.full_name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="topbar-avatar">
+
+                        {{ current_user.full_name[0] | upper }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- FLASH MESSAGES -->
+
+        <div class="app-flash-area">
+
+            {% with messages = get_flashed_messages(
+                with_categories=true
+            ) %}
+
+                {% if messages %}
+
+                    {% for category, message in messages %}
+
+                        <div
+                            class="flash-message {{ category }}"
+                        >
+
+                            <span>
+
+                                {% if category == "success" %}
+
+                                    ✓
+
+                                {% else %}
+
+                                    !
+
+                                {% endif %}
+
+                            </span>
+
+                            {{ message }}
+
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+        </div>
+
+
+
+        <!-- PAGE CONTENT -->
+
+        <main class="app-content">
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+
+    </div>
+
+</div>
+
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+></div>
+
+<!-- =====================================
+     DELETE STUDY SESSION MODAL
+====================================== -->
+
+<div
+    class="study-session-delete-overlay"
+    id="studySessionDeleteOverlay"
+>
+
+    <div class="study-session-delete-modal">
+
+        <div class="study-session-delete-icon">
+            !
+        </div>
+
+
+        <span class="study-session-delete-label">
+            DELETE STUDY SESSION
+        </span>
+
+
+        <h2>
+            Remove this study record?
+        </h2>
+
+
+        <p>
+            You are about to delete the study session for
+            <strong id="studySessionDeleteSubject">
+                this subject
+            </strong>
+            recorded on
+            <strong id="studySessionDeleteDate">
+                this date
+            </strong>.
+        </p>
+
+
+        <p class="study-session-delete-warning">
+            Your study totals will be recalculated automatically.
+        </p>
+
+
+        <div class="study-session-delete-actions">
+
+            <button
+                type="button"
+                class="study-session-delete-cancel"
+                id="studySessionDeleteCancel"
+            >
+                Cancel
+            </button>
+
+
+            <form
+                method="POST"
+                id="studySessionDeleteForm"
+            >
+
+                <button
+                    type="submit"
+                    class="study-session-delete-confirm"
+                >
+                    Delete Session
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- =====================================
+     DELETE ASSESSMENT MODAL
+====================================== -->
+
+<div
+    class="mark-delete-overlay"
+    id="markDeleteOverlay"
+>
+
+    <div class="mark-delete-modal">
+
+        <div class="mark-delete-icon">
+            !
+        </div>
+
+
+        <span class="mark-delete-label">
+            DELETE ASSESSMENT
+        </span>
+
+
+        <h2>
+            Delete this result?
+        </h2>
+
+
+        <p>
+            You are about to permanently delete
+            <strong id="markDeleteAssessment">
+                this assessment
+            </strong>
+            from
+            <strong id="markDeleteSubject">
+                this subject
+            </strong>.
+        </p>
+
+
+        <p class="mark-delete-warning">
+            Your performance calculations will be updated automatically.
+        </p>
+
+
+        <div class="mark-delete-actions">
+
+            <button
+                type="button"
+                class="mark-delete-cancel"
+                id="markDeleteCancel"
+            >
+                Cancel
+            </button>
+
+
+            <form
+                method="POST"
+                id="markDeleteForm"
+            >
+
+                <button
+                    type="submit"
+                    class="mark-delete-confirm"
+                >
+                    Delete Result
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script
+    src="{{ url_for('static', filename='js/main.js') }}"
+></script>
+
+</body>
+
+</html>

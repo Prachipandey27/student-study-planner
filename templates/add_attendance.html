@@ -1,0 +1,467 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Add Attendance | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Add Attendance
+{% endblock %}
+
+
+{% block content %}
+
+<section class="subject-form-page">
+
+
+    <div class="subject-form-header">
+
+        <div>
+
+            <a
+                href="{{ url_for('attendance') }}"
+                class="back-link"
+            >
+                ← Back to Attendance
+            </a>
+
+
+            <span class="dashboard-eyebrow">
+                ATTENDANCE TRACKING
+            </span>
+
+
+            <h1>
+                Record attendance
+            </h1>
+
+
+            <p>
+                Enter the number of classes held and
+                attended. StudyTrack will calculate
+                your attendance automatically.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="subject-form-layout">
+
+
+        <!-- FORM -->
+
+        <div class="subject-form-card">
+
+
+            <div class="subject-form-card-header">
+
+                <div class="form-header-icon">
+                    ✓
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Attendance Details
+                    </h2>
+
+                    <p>
+                        Record attendance for one
+                        subject and date.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <form
+                method="POST"
+                action="{{ url_for('add_attendance') }}"
+                class="subject-form"
+            >
+
+
+                <!-- SUBJECT -->
+
+                <div class="subject-form-group">
+
+                    <label for="subject_id">
+                        Subject
+                        <span>*</span>
+                    </label>
+
+
+                    {% set form_subject_id =
+                        request.form.get(
+                            'subject_id'
+                        )
+                    %}
+
+
+                    <select
+                        id="subject_id"
+                        name="subject_id"
+                        class="studytrack-select"
+                        required
+                    >
+
+                        <option value="">
+                            Choose a subject
+                        </option>
+
+
+                        {% for subject in subjects %}
+
+                            <option
+                                value="{{ subject.id }}"
+
+                                {% if
+                                    (
+                                        form_subject_id
+                                        and
+                                        form_subject_id | int
+                                        == subject.id
+                                    )
+                                    or
+                                    (
+                                        not form_subject_id
+                                        and
+                                        selected_subject_id
+                                        == subject.id
+                                    )
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ subject.name }}
+
+                                {% if subject.code %}
+                                    ({{ subject.code }})
+                                {% endif %}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+
+                    <small>
+                        Only subjects belonging to your
+                        account are available.
+                    </small>
+
+                </div>
+
+
+
+                <!-- DATE -->
+
+                <div class="subject-form-group">
+
+                    <label for="attendance_date">
+                        Attendance Date
+                        <span>*</span>
+                    </label>
+
+
+                    <input
+                        type="date"
+                        id="attendance_date"
+                        name="attendance_date"
+                        max="{{ today.isoformat() }}"
+                        value="{{ request.form.get(
+                            'attendance_date',
+                            today.isoformat()
+                        ) }}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- CLASS COUNTS -->
+
+                <div class="subject-form-group">
+
+                    <label>
+                        Classes
+                        <span>*</span>
+                    </label>
+
+
+                    <div class="attendance-entry-grid">
+
+
+                        <div>
+
+                            <label
+                                for="classes_held"
+                                class="duration-mini-label"
+                            >
+                                Classes Held
+                            </label>
+
+
+                            <input
+                                type="number"
+                                id="classes_held"
+                                name="classes_held"
+                                min="1"
+                                max="50"
+                                step="1"
+                                placeholder="4"
+                                value="{{ request.form.get(
+                                    'classes_held',
+                                    ''
+                                ) }}"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <div>
+
+                            <label
+                                for="classes_attended"
+                                class="duration-mini-label"
+                            >
+                                Classes Attended
+                            </label>
+
+
+                            <input
+                                type="number"
+                                id="classes_attended"
+                                name="classes_attended"
+                                min="0"
+                                step="1"
+                                placeholder="3"
+                                value="{{ request.form.get(
+                                    'classes_attended',
+                                    ''
+                                ) }}"
+                                required
+                            >
+
+                        </div>
+
+
+                    </div>
+
+
+                    <small>
+                        Classes attended cannot exceed
+                        classes held.
+                    </small>
+
+                </div>
+
+
+
+                <!-- LIVE PREVIEW -->
+
+                <div class="attendance-form-preview">
+
+                    <span>
+                        ESTIMATED ATTENDANCE
+                    </span>
+
+
+                    <strong id="attendancePreview">
+                        --%
+                    </strong>
+
+
+                    <p id="attendancePreviewText">
+                        Enter the class counts to preview
+                        the attendance percentage.
+                    </p>
+
+                </div>
+
+
+
+                <!-- NOTES -->
+
+                <div class="subject-form-group">
+
+                    <label for="notes">
+                        Notes
+                        <span class="optional-label">
+                            Optional
+                        </span>
+                    </label>
+
+
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        maxlength="300"
+                        rows="4"
+                        class="study-session-textarea"
+                        placeholder="e.g. Missed one morning lecture"
+                    >{{ request.form.get('notes', '') }}</textarea>
+
+
+                    <small>
+                        Maximum 300 characters.
+                    </small>
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="subject-form-actions">
+
+                    <a
+                        href="{{ url_for('attendance') }}"
+                        class="form-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="form-save-button"
+                    >
+
+                        Save Attendance
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- GUIDE -->
+
+        <aside class="subject-form-guide">
+
+            <span class="guide-label">
+                ATTENDANCE DATA
+            </span>
+
+
+            <h2>
+                Build an accurate attendance record.
+            </h2>
+
+
+            <p>
+                StudyTrack calculates attendance from
+                actual class totals instead of averaging
+                manually entered percentages.
+            </p>
+
+
+            <div class="guide-items">
+
+
+                <div>
+
+                    <span class="guide-number">
+                        01
+                    </span>
+
+
+                    <div>
+
+                        <strong>
+                            Record classes held
+                        </strong>
+
+                        <p>
+                            Enter the total number of
+                            classes conducted.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        02
+                    </span>
+
+
+                    <div>
+
+                        <strong>
+                            Record classes attended
+                        </strong>
+
+                        <p>
+                            Enter how many of those
+                            classes you attended.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        03
+                    </span>
+
+
+                    <div>
+
+                        <strong>
+                            Track the real percentage
+                        </strong>
+
+                        <p>
+                            New records automatically
+                            update your subject and
+                            overall attendance.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+
+</section>
+
+{% endblock %}

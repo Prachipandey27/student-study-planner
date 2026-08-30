@@ -1,0 +1,344 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Add Subject | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Add Subject
+{% endblock %}
+
+
+{% block content %}
+
+<section class="subject-form-page">
+
+
+    <div class="subject-form-header">
+
+        <div>
+
+            <a
+                href="{{ url_for('subjects') }}"
+                class="back-link"
+            >
+                ← Back to Subjects
+            </a>
+
+
+            <span class="dashboard-eyebrow">
+                SUBJECT MANAGEMENT
+            </span>
+
+
+            <h1>
+                Add a new subject
+            </h1>
+
+
+            <p>
+                Create a subject workspace and set
+                targets that StudyTrack can use later
+                for performance analysis.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="subject-form-layout">
+
+
+        <!-- FORM -->
+
+        <div class="subject-form-card">
+
+
+            <div class="subject-form-card-header">
+
+                <div class="form-header-icon">
+                    +
+                </div>
+
+                <div>
+
+                    <h2>
+                        Subject Details
+                    </h2>
+
+                    <p>
+                        Enter the basic information
+                        for this subject.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <form
+                method="POST"
+                action="{{ url_for('add_subject') }}"
+                class="subject-form"
+            >
+
+
+                <div class="subject-form-group">
+
+                    <label for="name">
+                        Subject Name
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        maxlength="100"
+                        placeholder="e.g. Python Programming"
+                        value="{{ request.form.get('name', '') }}"
+                        required
+                    >
+
+                    <small>
+                        Use the full name of the subject.
+                    </small>
+
+                </div>
+
+
+
+                <div class="subject-form-group">
+
+                    <label for="code">
+                        Subject Code
+                    </label>
+
+                    <input
+                        type="text"
+                        id="code"
+                        name="code"
+                        maxlength="30"
+                        placeholder="e.g. PY101"
+                        value="{{ request.form.get('code', '') }}"
+                    >
+
+                    <small>
+                        Optional. Useful for quickly
+                        identifying subjects.
+                    </small>
+
+                </div>
+
+
+
+                <div class="subject-form-row">
+
+
+                    <div class="subject-form-group">
+
+                        <label for="target_marks">
+                            Target Marks
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-with-suffix">
+
+                            <input
+                                type="number"
+                                id="target_marks"
+                                name="target_marks"
+                                min="1"
+                                max="100"
+                                value="{{ request.form.get('target_marks', '75') }}"
+                                required
+                            >
+
+                            <span>
+                                %
+                            </span>
+
+                        </div>
+
+                        <small>
+                            Your desired performance.
+                        </small>
+
+                    </div>
+
+
+
+                    <div class="subject-form-group">
+
+                        <label for="target_study_hours">
+                            Weekly Study Target
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-with-suffix">
+
+                            <input
+                                type="number"
+                                id="target_study_hours"
+                                name="target_study_hours"
+                                min="0.5"
+                                max="100"
+                                step="0.5"
+                                value="{{ request.form.get('target_study_hours', '5') }}"
+                                required
+                            >
+
+                            <span>
+                                hrs
+                            </span>
+
+                        </div>
+
+                        <small>
+                            Planned hours per week.
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="subject-form-actions">
+
+                    <a
+                        href="{{ url_for('subjects') }}"
+                        class="form-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="form-save-button"
+                    >
+                        Create Subject
+
+                        <span>
+                            →
+                        </span>
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- SIDE INFORMATION -->
+
+        <aside class="subject-form-guide">
+
+            <span class="guide-label">
+                WHY SET TARGETS?
+            </span>
+
+            <h2>
+                Give StudyTrack something to measure against.
+            </h2>
+
+            <p>
+                Your targets will eventually help
+                StudyTrack understand whether a subject
+                needs additional attention.
+            </p>
+
+
+            <div class="guide-items">
+
+
+                <div>
+
+                    <span class="guide-number">
+                        01
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Target Marks
+                        </strong>
+
+                        <p>
+                            Compare your actual performance
+                            with your desired score.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        02
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Study Target
+                        </strong>
+
+                        <p>
+                            Compare planned study time
+                            with actual study sessions.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        03
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Priority Analysis
+                        </strong>
+
+                        <p>
+                            Combine these targets with
+                            marks, attendance and tasks
+                            later.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+
+</section>
+
+{% endblock %}

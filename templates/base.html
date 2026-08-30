@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+        StudyTrack
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+
+            <a href="/" class="logo">
+                <span class="logo-icon">S</span>
+                <span>StudyTrack</span>
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+
+                <a
+    href="{{ url_for('login') }}"
+    class="login-link"
+>
+    Login
+</a>
+
+                <a
+    href="{{ url_for('signup') }}"
+    class="nav-button"
+>
+    Sign Up
+</a>
+            </nav>
+
+            <button
+                class="menu-button"
+                id="menuButton"
+                aria-label="Open navigation menu"
+            >
+                ☰
+            </button>
+
+        </div>
+    </header>
+
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+
+    <footer class="footer">
+        <div class="footer-content">
+
+            <div>
+                <div class="footer-logo">
+                    <span class="logo-icon">S</span>
+                    <span>StudyTrack</span>
+                </div>
+
+                <p>
+                    Plan smarter. Track progress.
+                    Perform better.
+                </p>
+            </div>
+
+            <p class="footer-copy">
+                Student Study Planner & Performance Dashboard
+            </p>
+
+        </div>
+    </footer>
+
+
+    <script
+        src="{{ url_for('static', filename='js/main.js') }}"
+    ></script>
+
+</body>
+</html>

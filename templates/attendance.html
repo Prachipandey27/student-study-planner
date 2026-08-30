@@ -1,0 +1,804 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Attendance | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Attendance
+{% endblock %}
+
+
+{% block content %}
+
+<section class="attendance-page">
+
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
+    <div class="attendance-header">
+
+        <div>
+
+            <span class="dashboard-eyebrow">
+                ATTENDANCE TRACKING
+            </span>
+
+            <h1>
+                Attendance
+            </h1>
+
+            <p>
+                Track classes attended and held across
+                your subjects to understand your
+                actual attendance percentage.
+            </p>
+
+        </div>
+
+
+        <a
+    href="{{ url_for('add_attendance') }}"
+    class="attendance-add-button"
+>
+
+    <span>+</span>
+
+    Add Attendance
+
+</a>
+
+    </div>
+
+
+
+    <!-- =====================================
+         SUMMARY
+    ====================================== -->
+
+    <div class="attendance-summary-grid">
+
+
+        <!-- OVERALL -->
+
+        <article class="attendance-summary-card">
+
+            <div class="attendance-summary-icon purple">
+                %
+            </div>
+
+            <div>
+
+                <span>
+                    Overall Attendance
+                </span>
+
+                <strong>
+                    {{ overall_attendance }}%
+                </strong>
+
+                <small>
+                    Across all recorded classes
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- ATTENDED -->
+
+        <article class="attendance-summary-card">
+
+            <div class="attendance-summary-icon green">
+                ✓
+            </div>
+
+            <div>
+
+                <span>
+                    Classes Attended
+                </span>
+
+                <strong>
+                    {{ total_classes_attended }}
+                </strong>
+
+                <small>
+                    Classes you attended
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- HELD -->
+
+        <article class="attendance-summary-card">
+
+            <div class="attendance-summary-icon blue">
+                #
+            </div>
+
+            <div>
+
+                <span>
+                    Classes Held
+                </span>
+
+                <strong>
+                    {{ total_classes_held }}
+                </strong>
+
+                <small>
+                    Total classes recorded
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- RECORDS -->
+
+        <article class="attendance-summary-card">
+
+            <div class="attendance-summary-icon orange">
+                ◷
+            </div>
+
+            <div>
+
+                <span>
+                    Attendance Records
+                </span>
+
+                <strong>
+                    {{ attendance_record_count }}
+                </strong>
+
+                <small>
+                    Entries recorded
+                </small>
+
+            </div>
+
+        </article>
+
+
+    </div>
+
+
+
+    <!-- =====================================
+         OVERALL ATTENDANCE
+    ====================================== -->
+
+    <div class="attendance-main-grid">
+
+
+        <section class="dashboard-panel attendance-overview-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        OVERALL ATTENDANCE
+                    </span>
+
+                    <h2>
+                        Attendance Overview
+                    </h2>
+
+                </div>
+
+
+                <span class="attendance-overall-badge">
+                    {{ overall_attendance }}%
+                </span>
+
+            </div>
+
+
+
+            <div class="attendance-overview-content">
+
+
+                <div
+                    class="attendance-progress-ring"
+                    style="
+                        --attendance-progress:
+                        {{ overall_attendance }}%;
+                    "
+                >
+
+                    <div>
+
+                        <strong>
+                            {{ overall_attendance }}%
+                        </strong>
+
+                        <span>
+                            attendance
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="attendance-overview-details">
+
+
+                    {% if attendance_record_count > 0 %}
+
+                        <h3>
+                            Your attendance is based on
+                            {{ total_classes_held }}
+                            recorded classes.
+                        </h3>
+
+
+                        <p>
+                            You attended
+
+                            <strong>
+                                {{ total_classes_attended }}
+                            </strong>
+
+                            out of
+
+                            <strong>
+                                {{ total_classes_held }}
+                            </strong>
+
+                            classes across your subjects.
+                        </p>
+
+
+                    {% else %}
+
+                        <h3>
+                            Start tracking your attendance.
+                        </h3>
+
+
+                        <p>
+                            Add attendance records to
+                            calculate your overall and
+                            subject-wise attendance.
+                        </p>
+
+                    {% endif %}
+
+
+
+                    <div class="attendance-overview-metrics">
+
+
+                        <div>
+
+                            <span>
+                                Attended
+                            </span>
+
+                            <strong>
+                                {{ total_classes_attended }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Held
+                            </span>
+
+                            <strong>
+                                {{ total_classes_held }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Subjects Tracked
+                            </span>
+
+                            <strong>
+                                {{ subjects_with_attendance }}
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ATTENDANCE INFO -->
+
+        <section class="dashboard-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        CALCULATION
+                    </span>
+
+                    <h2>
+                        How It Works
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="attendance-guide-list">
+
+
+                <div>
+
+                    <span>
+                        01
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Record classes held
+                        </strong>
+
+                        <p>
+                            Enter how many classes
+                            were conducted.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        02
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Record attendance
+                        </strong>
+
+                        <p>
+                            Enter how many of those
+                            classes you attended.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        03
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Calculate automatically
+                        </strong>
+
+                        <p>
+                            StudyTrack combines the
+                            totals for accurate results.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+
+    <!-- =====================================
+         SUBJECT ATTENDANCE
+    ====================================== -->
+
+    <section class="dashboard-panel attendance-subject-panel">
+
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="panel-label">
+                    SUBJECT ANALYSIS
+                </span>
+
+                <h2>
+                    Subject Attendance
+                </h2>
+
+            </div>
+
+        </div>
+
+
+
+        {% if subject_attendance %}
+
+
+            <div class="attendance-subject-grid">
+
+
+                {% for item in subject_attendance %}
+
+
+                    <article class="attendance-subject-card">
+
+
+                        <div class="attendance-subject-top">
+
+
+                            <div class="attendance-subject-icon">
+
+                                {{
+                                    item.subject.name[0]
+                                    | upper
+                                }}
+
+                            </div>
+
+
+                            <div>
+
+                                <h3>
+                                    {{ item.subject.name }}
+                                </h3>
+
+
+                                {% if item.subject.code %}
+
+                                    <span>
+                                        {{ item.subject.code }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        {% if item.record_count > 0 %}
+
+
+                            <div class="attendance-subject-score">
+
+                                <strong>
+                                    {{ item.percentage }}%
+                                </strong>
+
+                                <span>
+                                    attendance
+                                </span>
+
+                            </div>
+
+
+
+                            <div class="attendance-subject-track">
+
+                                <div
+                                    style="
+                                        width:
+                                        {{ item.percentage }}%;
+                                    "
+                                >
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="attendance-subject-stats">
+
+
+                                <div>
+
+                                    <span>
+                                        Attended
+                                    </span>
+
+                                    <strong>
+                                        {{ item.classes_attended }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        Held
+                                    </span>
+
+                                    <strong>
+                                        {{ item.classes_held }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        Records
+                                    </span>
+
+                                    <strong>
+                                        {{ item.record_count }}
+                                    </strong>
+
+                                </div>
+
+
+                            </div>
+
+
+                        {% else %}
+
+
+                            <div class="attendance-no-data">
+
+                                <span>
+                                    No attendance data yet
+                                </span>
+
+                                <p>
+                                    Start recording classes
+                                    for this subject.
+                                </p>
+
+                            </div>
+
+
+                        {% endif %}
+
+
+                    </article>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="attendance-empty-state">
+
+                <div>
+                    S
+                </div>
+
+                <h3>
+                    Add a subject first.
+                </h3>
+
+                <p>
+                    Attendance will be organised
+                    subject by subject.
+                </p>
+
+                <a href="{{ url_for('add_subject') }}">
+                    Add Subject
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         ATTENDANCE HISTORY
+    ====================================== -->
+
+    <section class="dashboard-panel attendance-history-panel">
+
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="panel-label">
+                    ATTENDANCE HISTORY
+                </span>
+
+                <h2>
+                    Recent Records
+                </h2>
+
+            </div>
+
+
+            {% if records %}
+
+                <span class="attendance-record-count">
+                    {{ attendance_record_count }}
+                    total
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+
+        {% if recent_records %}
+
+
+            <div class="attendance-record-list">
+
+
+                {% for record in recent_records %}
+
+
+                    <article class="attendance-record-row">
+
+
+                        <div class="attendance-date-card">
+
+                            <strong>
+                                {{
+                                    record.attendance_date
+                                    .strftime('%d')
+                                }}
+                            </strong>
+
+                            <span>
+                                {{
+                                    record.attendance_date
+                                    .strftime('%b')
+                                }}
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="attendance-record-info">
+
+                            <strong>
+                                {{ record.subject.name }}
+                            </strong>
+
+
+                            {% if record.notes %}
+
+                                <span>
+                                    {{ record.notes }}
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    Attendance record
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+
+                        <div class="attendance-record-score">
+
+                            <strong>
+                                {{ record.classes_attended }}
+                                /
+                                {{ record.classes_held }}
+                            </strong>
+
+                            <span>
+                                {{ record.percentage }}%
+                            </span>
+
+                        </div>
+
+
+                    </article>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="attendance-empty-state large">
+
+                <div>
+                    ✓
+                </div>
+
+                <h3>
+                    No attendance records yet.
+                </h3>
+
+                <p>
+                    Once you start recording attendance,
+                    your history and percentages will
+                    appear here.
+                </p>
+
+                <span>
+                    Attendance entry will be enabled
+                    in the next step.
+                </span>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+</section>
+
+{% endblock %}

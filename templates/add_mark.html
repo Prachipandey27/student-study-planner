@@ -1,0 +1,433 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Add Marks | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Add Marks
+{% endblock %}
+
+
+{% block content %}
+
+<section class="subject-form-page">
+
+
+    <div class="subject-form-header">
+
+        <div>
+
+            <a
+                href="{{ url_for('performance') }}"
+                class="back-link"
+            >
+                ← Back to Performance
+            </a>
+
+
+            <span class="dashboard-eyebrow">
+                ACADEMIC PERFORMANCE
+            </span>
+
+
+            <h1>
+                Add assessment result
+            </h1>
+
+
+            <p>
+                Record your assessment marks and let
+                StudyTrack calculate your academic
+                performance automatically.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="subject-form-layout">
+
+
+        <!-- FORM -->
+
+        <div class="subject-form-card">
+
+
+            <div class="subject-form-card-header">
+
+                <div class="form-header-icon">
+                    %
+                </div>
+
+                <div>
+
+                    <h2>
+                        Assessment Details
+                    </h2>
+
+                    <p>
+                        Enter the result exactly as
+                        awarded in the assessment.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <form
+                method="POST"
+                action="{{ url_for('add_mark') }}"
+                class="subject-form"
+            >
+
+
+                <!-- ASSESSMENT NAME -->
+
+                <div class="subject-form-group">
+
+                    <label for="assessment_name">
+                        Assessment Name
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="assessment_name"
+                        name="assessment_name"
+                        maxlength="120"
+                        placeholder="e.g. Mid-Semester Exam"
+                        value="{{ request.form.get(
+                            'assessment_name',
+                            ''
+                        ) }}"
+                        required
+                    >
+
+                    <small>
+                        Example: Unit Test 1, Assignment,
+                        Mid-Semester Exam.
+                    </small>
+
+                </div>
+
+
+
+                <!-- SUBJECT -->
+
+                <div class="subject-form-group">
+
+                    <label for="subject_id">
+                        Subject
+                        <span>*</span>
+                    </label>
+
+
+                    {% set form_subject_id =
+                        request.form.get('subject_id')
+                    %}
+
+
+                    <select
+                        id="subject_id"
+                        name="subject_id"
+                        class="studytrack-select"
+                        required
+                    >
+
+                        <option value="">
+                            Choose a subject
+                        </option>
+
+
+                        {% for subject in subjects %}
+
+                            <option
+                                value="{{ subject.id }}"
+
+                                {% if
+                                    (
+                                        form_subject_id
+                                        and
+                                        form_subject_id | int
+                                        == subject.id
+                                    )
+                                    or
+                                    (
+                                        not form_subject_id
+                                        and
+                                        selected_subject_id
+                                        == subject.id
+                                    )
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ subject.name }}
+
+                                {% if subject.code %}
+                                    ({{ subject.code }})
+                                {% endif %}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <small>
+                        Only your subjects are available.
+                    </small>
+
+                </div>
+
+
+
+                <!-- MARKS -->
+
+                <div class="subject-form-group">
+
+                    <label>
+                        Marks
+                        <span>*</span>
+                    </label>
+
+
+                    <div class="marks-entry-grid">
+
+
+                        <div>
+
+                            <label
+                                for="marks_obtained"
+                                class="duration-mini-label"
+                            >
+                                Marks Obtained
+                            </label>
+
+                            <input
+                                type="number"
+                                id="marks_obtained"
+                                name="marks_obtained"
+                                min="0"
+                                step="0.01"
+                                placeholder="38"
+                                value="{{ request.form.get(
+                                    'marks_obtained',
+                                    ''
+                                ) }}"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <div>
+
+                            <label
+                                for="maximum_marks"
+                                class="duration-mini-label"
+                            >
+                                Maximum Marks
+                            </label>
+
+                            <input
+                                type="number"
+                                id="maximum_marks"
+                                name="maximum_marks"
+                                min="0.01"
+                                step="0.01"
+                                placeholder="50"
+                                value="{{ request.form.get(
+                                    'maximum_marks',
+                                    ''
+                                ) }}"
+                                required
+                            >
+
+                        </div>
+
+
+                    </div>
+
+
+                    <small>
+                        StudyTrack will calculate the
+                        percentage automatically.
+                    </small>
+
+                </div>
+
+
+
+                <!-- DATE -->
+
+                <div class="subject-form-group">
+
+                    <label for="assessment_date">
+                        Assessment Date
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="assessment_date"
+                        name="assessment_date"
+                        max="{{ today.isoformat() }}"
+                        value="{{ request.form.get(
+                            'assessment_date',
+                            today.isoformat()
+                        ) }}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="subject-form-actions">
+
+                    <a
+                        href="{{ url_for('performance') }}"
+                        class="form-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="form-save-button"
+                    >
+
+                        Save Result
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+
+
+        <!-- GUIDE -->
+
+        <aside class="subject-form-guide">
+
+            <span class="guide-label">
+                PERFORMANCE DATA
+            </span>
+
+
+            <h2>
+                Turn assessment results into useful insights.
+            </h2>
+
+
+            <p>
+                StudyTrack combines your marks to
+                calculate subject-level and overall
+                academic performance.
+            </p>
+
+
+            <div class="guide-items">
+
+
+                <div>
+
+                    <span class="guide-number">
+                        01
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Enter raw marks
+                        </strong>
+
+                        <p>
+                            Record the actual score
+                            and maximum marks.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        02
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Compare targets
+                        </strong>
+
+                        <p>
+                            StudyTrack compares actual
+                            performance with your goal.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        03
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Track improvement
+                        </strong>
+
+                        <p>
+                            Multiple assessments create
+                            a clearer performance history.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+
+</section>
+
+{% endblock %}

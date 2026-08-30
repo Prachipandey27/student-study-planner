@@ -1,0 +1,377 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Subjects | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Subjects
+{% endblock %}
+
+
+{% block content %}
+
+<section class="subjects-page">
+
+
+    <!-- PAGE HEADER -->
+
+    <div class="subjects-header">
+
+        <div>
+
+            <span class="dashboard-eyebrow">
+                ACADEMIC WORKSPACE
+            </span>
+
+            <h1>
+                Your Subjects
+            </h1>
+
+            <p>
+                Organise your subjects and set
+                performance and study targets for each one.
+            </p>
+
+        </div>
+
+
+        <a
+    href="{{ url_for('add_subject') }}"
+    class="add-subject-button"
+>
+    <span>+</span>
+    Add Subject
+</a>
+
+    </div>
+
+
+
+    <!-- SUBJECT SUMMARY -->
+
+    <div class="subjects-summary">
+
+        <div class="subject-summary-card">
+
+            <span>
+                Total Subjects
+            </span>
+
+            <strong>
+                {{ subjects | length }}
+            </strong>
+
+        </div>
+
+
+        <div class="subject-summary-card">
+
+            <span>
+                Active Workspace
+            </span>
+
+            <strong>
+                {{ current_user.full_name.split()[0] }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    {% if subjects %}
+
+
+        <!-- SUBJECT GRID -->
+
+        <div class="subjects-grid">
+
+            {% for subject in subjects %}
+
+                <article class="subject-card">
+
+                    <div class="subject-card-top">
+
+                        <div class="subject-icon">
+
+                            {{ subject.name[0] | upper }}
+
+                        </div>
+
+
+                        {% if subject.code %}
+
+                            <span class="subject-code">
+                                {{ subject.code }}
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <h2>
+                        {{ subject.name }}
+                    </h2>
+
+
+                    <div class="subject-targets">
+
+                        <div>
+
+                            <span>
+                                Target Marks
+                            </span>
+
+                            <strong>
+                                {{ subject.target_marks }}%
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Weekly Study
+                            </span>
+
+                            <strong>
+                                {{ subject.target_study_hours }}h
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="subject-progress-placeholder">
+
+                        <div>
+
+                            <span>
+                                Current Progress
+                            </span>
+
+                            <small>
+                                Add academic data to calculate
+                            </small>
+
+                        </div>
+
+                        <span class="subject-status">
+                            New
+                        </span>
+
+                    </div>
+
+
+                    <div class="subject-card-actions subject-card-actions-three">
+
+    <a
+        href="{{ url_for(
+            'subject_detail',
+            subject_id=subject.id
+        ) }}"
+        class="subject-view-button"
+    >
+        View
+    </a>
+
+
+    <a
+        href="{{ url_for(
+            'edit_subject',
+            subject_id=subject.id
+        ) }}"
+        class="subject-edit-button"
+    >
+        Edit
+    </a>
+
+
+    <button
+        type="button"
+        class="subject-delete-button"
+        data-delete-url="{{ url_for(
+            'delete_subject',
+            subject_id=subject.id
+        ) }}"
+        data-subject-name="{{ subject.name }}"
+    >
+        Delete
+    </button>
+
+</div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+
+        <!-- EMPTY STATE -->
+
+        <div class="subjects-empty-state">
+
+            <div class="subjects-empty-visual">
+
+                <div class="empty-subject-card card-one">
+
+                    <span>P</span>
+
+                    <div>
+
+                        <strong>
+                            Python
+                        </strong>
+
+                        <small>
+                            80% Target
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="empty-subject-card card-two">
+
+                    <span>D</span>
+
+                    <div>
+
+                        <strong>
+                            Database
+                        </strong>
+
+                        <small>
+                            75% Target
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="empty-subject-plus">
+                    +
+                </div>
+
+            </div>
+
+
+            <span class="empty-state-label">
+                YOUR SUBJECT SPACE IS EMPTY
+            </span>
+
+
+            <h2>
+                Start by adding your first subject.
+            </h2>
+
+
+            <p>
+                Subjects become the foundation for
+                StudyTrack. Your tasks, marks,
+                attendance, study sessions and
+                performance insights will eventually
+                connect back to them.
+            </p>
+
+
+            <a
+    href="{{ url_for('add_subject') }}"
+    class="empty-add-button"
+>
+    <span>+</span>
+    Add Your First Subject
+</a>
+
+
+            
+                
+
+        </div>
+
+
+    {% endif %}
+
+
+</section>
+
+<div
+    class="delete-modal-overlay"
+    id="deleteModalOverlay"
+>
+
+    <div class="delete-modal">
+
+        <div class="delete-modal-icon">
+            !
+        </div>
+
+
+        <span class="delete-modal-label">
+            DELETE SUBJECT
+        </span>
+
+
+        <h2>
+            Are you sure?
+        </h2>
+
+
+        <p>
+            You are about to delete
+            <strong id="deleteSubjectName">
+                this subject
+            </strong>.
+        </p>
+
+
+        <p class="delete-warning">
+            This action cannot be undone.
+        </p>
+
+
+        <div class="delete-modal-actions">
+
+            <button
+                type="button"
+                class="delete-cancel-button"
+                id="deleteCancelButton"
+            >
+                Cancel
+            </button>
+
+
+            <form
+                method="POST"
+                id="deleteSubjectForm"
+            >
+
+                <button
+                    type="submit"
+                    class="delete-confirm-button"
+                >
+                    Delete Subject
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

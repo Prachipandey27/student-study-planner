@@ -1,0 +1,423 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Edit Task | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Edit Study Task
+{% endblock %}
+
+
+{% block content %}
+
+<section class="subject-form-page">
+
+
+    <div class="subject-form-header">
+
+        <div>
+
+            <a
+                href="{{ url_for('planner') }}"
+                class="back-link"
+            >
+                ← Back to Study Planner
+            </a>
+
+
+            <span class="dashboard-eyebrow">
+                STUDY PLANNER
+            </span>
+
+
+            <h1>
+                Edit study task
+            </h1>
+
+
+            <p>
+                Update the task, deadline,
+                subject or priority.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="subject-form-layout">
+
+
+        <div class="subject-form-card">
+
+
+            <div class="subject-form-card-header">
+
+                <div class="form-header-icon">
+                    ✎
+                </div>
+
+                <div>
+
+                    <h2>
+                        Task Details
+                    </h2>
+
+                    <p>
+                        Update this existing task.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'edit_task',
+                    task_id=task.id
+                ) }}"
+                class="subject-form"
+            >
+
+
+                <!-- TASK NAME -->
+
+                <div class="subject-form-group">
+
+                    <label for="task_name">
+                        Task Name
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="task_name"
+                        name="task_name"
+                        maxlength="150"
+                        value="{{ request.form.get(
+                            'task_name',
+                            task.task_name
+                        ) }}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- SUBJECT -->
+
+                <div class="subject-form-group">
+
+                    <label for="subject_id">
+                        Subject
+                        <span>*</span>
+                    </label>
+
+
+                    {% set selected_subject =
+                        request.form.get(
+                            'subject_id',
+                            task.subject_id
+                        ) | int
+                    %}
+
+
+                    <select
+                        id="subject_id"
+                        name="subject_id"
+                        class="studytrack-select"
+                        required
+                    >
+
+                        {% for subject in subjects %}
+
+                            <option
+                                value="{{ subject.id }}"
+
+                                {% if
+                                    selected_subject
+                                    == subject.id
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ subject.name }}
+
+                                {% if subject.code %}
+                                    ({{ subject.code }})
+                                {% endif %}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- DEADLINE -->
+
+                <div class="subject-form-group">
+
+                    <label for="deadline">
+                        Deadline
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="deadline"
+                        name="deadline"
+                        min="{{ today.isoformat() }}"
+                        value="{{ request.form.get(
+                            'deadline',
+                            task.deadline.isoformat()
+                        ) }}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- PRIORITY -->
+
+                {% set selected_priority =
+                    request.form.get(
+                        'priority',
+                        task.priority
+                    )
+                %}
+
+
+                <div class="subject-form-group">
+
+                    <label>
+                        Priority
+                        <span>*</span>
+                    </label>
+
+
+                    <div class="priority-options">
+
+
+                        <input
+                            type="radio"
+                            name="priority"
+                            id="priority_high"
+                            value="High"
+                            class="priority-radio"
+
+                            {% if
+                                selected_priority == 'High'
+                            %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <label
+                            for="priority_high"
+                            class="priority-choice priority-choice-high"
+                        >
+
+                            <span>!</span>
+
+                            <div>
+                                <strong>High</strong>
+                                <small>Urgent attention</small>
+                            </div>
+
+                        </label>
+
+
+
+                        <input
+                            type="radio"
+                            name="priority"
+                            id="priority_medium"
+                            value="Medium"
+                            class="priority-radio"
+
+                            {% if
+                                selected_priority == 'Medium'
+                            %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <label
+                            for="priority_medium"
+                            class="priority-choice priority-choice-medium"
+                        >
+
+                            <span>◷</span>
+
+                            <div>
+                                <strong>Medium</strong>
+                                <small>Normal priority</small>
+                            </div>
+
+                        </label>
+
+
+
+                        <input
+                            type="radio"
+                            name="priority"
+                            id="priority_low"
+                            value="Low"
+                            class="priority-radio"
+
+                            {% if
+                                selected_priority == 'Low'
+                            %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <label
+                            for="priority_low"
+                            class="priority-choice priority-choice-low"
+                        >
+
+                            <span>✓</span>
+
+                            <div>
+                                <strong>Low</strong>
+                                <small>Can wait</small>
+                            </div>
+
+                        </label>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="subject-form-actions">
+
+                    <a
+                        href="{{ url_for('planner') }}"
+                        class="form-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="form-save-button"
+                    >
+                        Save Changes
+
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+
+        <aside class="subject-form-guide">
+
+            <span class="guide-label">
+                TASK SETTINGS
+            </span>
+
+            <h2>
+                Plans change. Keep your planner current.
+            </h2>
+
+            <p>
+                Adjust the task when your schedule,
+                priorities or deadlines change.
+            </p>
+
+
+            <div class="guide-items">
+
+                <div>
+
+                    <span class="guide-number">
+                        01
+                    </span>
+
+                    <div>
+                        <strong>
+                            Change the deadline
+                        </strong>
+
+                        <p>
+                            Move the task when your
+                            schedule changes.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="guide-number">
+                        02
+                    </span>
+
+                    <div>
+                        <strong>
+                            Update priority
+                        </strong>
+
+                        <p>
+                            Raise or lower its importance.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <span class="guide-number">
+                        03
+                    </span>
+
+                    <div>
+                        <strong>
+                            Switch subjects
+                        </strong>
+
+                        <p>
+                            Correct the subject if the
+                            task was assigned incorrectly.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+</section>
+
+{% endblock %}

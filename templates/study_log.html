@@ -1,0 +1,602 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Study Log | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Study Log
+{% endblock %}
+
+
+{% block content %}
+
+<section class="study-log-page">
+
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
+    <div class="study-log-header">
+
+        <div>
+
+            <span class="dashboard-eyebrow">
+                TRACK YOUR STUDY TIME
+            </span>
+
+            <h1>
+                Study Log
+            </h1>
+
+            <p>
+                Record focused study sessions and
+                understand how consistently you're
+                working toward your weekly targets.
+            </p>
+
+        </div>
+
+
+        <a
+    href="{{ url_for('add_study_session') }}"
+    class="study-log-add-button"
+>
+    <span>+</span>
+    Add Study Session
+</a>
+
+    </div>
+
+
+
+    <!-- =====================================
+         SUMMARY CARDS
+    ====================================== -->
+
+    <div class="study-log-summary-grid">
+
+
+        <!-- TOTAL -->
+
+        <article class="study-log-summary-card">
+
+            <div class="study-log-summary-icon purple">
+                ◷
+            </div>
+
+
+            <div>
+
+                <span>
+                    Total Study Time
+                </span>
+
+                <strong>
+                    {{ total_minutes // 60 }}h
+                    {{ total_minutes % 60 }}m
+                </strong>
+
+                <small>
+                    Across all recorded sessions
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- WEEK -->
+
+        <article class="study-log-summary-card">
+
+            <div class="study-log-summary-icon blue">
+                W
+            </div>
+
+
+            <div>
+
+                <span>
+                    This Week
+                </span>
+
+                <strong>
+                    {{ week_minutes // 60 }}h
+                    {{ week_minutes % 60 }}m
+                </strong>
+
+                <small>
+                    Since
+                    {{ week_start.strftime('%d %b') }}
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- TODAY -->
+
+        <article class="study-log-summary-card">
+
+            <div class="study-log-summary-icon green">
+                ✓
+            </div>
+
+
+            <div>
+
+                <span>
+                    Today
+                </span>
+
+                <strong>
+                    {{ today_minutes // 60 }}h
+                    {{ today_minutes % 60 }}m
+                </strong>
+
+                <small>
+                    {{ today.strftime('%d %b %Y') }}
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- SESSIONS -->
+
+        <article class="study-log-summary-card">
+
+            <div class="study-log-summary-icon orange">
+                #
+            </div>
+
+
+            <div>
+
+                <span>
+                    Study Sessions
+                </span>
+
+                <strong>
+                    {{ session_count }}
+                </strong>
+
+                <small>
+                    Sessions recorded
+                </small>
+
+            </div>
+
+        </article>
+
+
+    </div>
+
+
+
+    <!-- =====================================
+         MAIN AREA
+    ====================================== -->
+
+    <div class="study-log-main-grid">
+
+
+        <!-- WEEKLY PROGRESS -->
+
+        <section class="dashboard-panel study-week-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        WEEKLY TARGET
+                    </span>
+
+                    <h2>
+                        Study Goal Progress
+                    </h2>
+
+                </div>
+
+
+                <span class="study-week-percentage">
+                    {{ weekly_progress }}%
+                </span>
+
+            </div>
+
+
+
+            <div class="study-week-content">
+
+
+                <div
+                    class="study-week-ring"
+                    style="--study-progress: {{ weekly_progress }}%;"
+                >
+
+                    <div>
+
+                        <strong>
+                            {{ weekly_progress }}%
+                        </strong>
+
+                        <span>
+                            this week
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="study-week-details">
+
+
+                    {% if weekly_target_minutes > 0 %}
+
+                        <h3>
+                            Keep building your weekly study rhythm.
+                        </h3>
+
+
+                        <p>
+                            You've studied
+
+                            <strong>
+                                {{ week_minutes // 60 }}h
+                                {{ week_minutes % 60 }}m
+                            </strong>
+
+                            toward a combined weekly target of
+
+                            <strong>
+                                {{ weekly_target_minutes // 60 }}h
+                                {{ weekly_target_minutes % 60 }}m.
+                            </strong>
+                        </p>
+
+
+                    {% else %}
+
+                        <h3>
+                            Set study targets for your subjects.
+                        </h3>
+
+                        <p>
+                            Add subjects with weekly study targets
+                            to begin measuring your progress.
+                        </p>
+
+                    {% endif %}
+
+
+
+                    <div class="study-week-breakdown">
+
+
+                        <div>
+
+                            <span>
+                                Studied
+                            </span>
+
+                            <strong>
+                                {{ week_minutes // 60 }}h
+                                {{ week_minutes % 60 }}m
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Target
+                            </span>
+
+                            <strong>
+                                {{ weekly_target_minutes // 60 }}h
+                                {{ weekly_target_minutes % 60 }}m
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SESSION INFO -->
+
+        <section class="dashboard-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        STUDY HABIT
+                    </span>
+
+                    <h2>
+                        How Logging Helps
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="study-log-guide-list">
+
+
+                <div>
+
+                    <span>
+                        01
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Record actual effort
+                        </strong>
+
+                        <p>
+                            Track how much time you
+                            genuinely spend studying.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        02
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Compare with targets
+                        </strong>
+
+                        <p>
+                            See whether your weekly
+                            study plan is realistic.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        03
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Discover patterns
+                        </strong>
+
+                        <p>
+                            StudyTrack will later use
+                            this history in analytics.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+
+    <!-- =====================================
+         RECENT STUDY SESSIONS
+    ====================================== -->
+
+    <section class="dashboard-panel study-session-history">
+
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="panel-label">
+                    STUDY HISTORY
+                </span>
+
+                <h2>
+                    Recent Study Sessions
+                </h2>
+
+            </div>
+
+
+            {% if sessions %}
+
+                <span class="study-session-total">
+                    {{ session_count }}
+                    total
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+
+        {% if recent_sessions %}
+
+
+            <div class="study-session-list">
+
+
+                {% for session in recent_sessions %}
+
+
+                    <article class="study-session-row">
+
+
+                        <div class="study-session-date">
+
+                            <strong>
+                                {{ session.study_date.strftime('%d') }}
+                            </strong>
+
+                            <span>
+                                {{ session.study_date.strftime('%b') }}
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="study-session-information">
+
+                            <strong>
+                                {{ session.subject.name }}
+                            </strong>
+
+
+                            {% if session.notes %}
+
+                                <p>
+                                    {{ session.notes }}
+                                </p>
+
+                            {% else %}
+
+                                <p>
+                                    Study session recorded
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+
+
+                        <div class="study-session-duration">
+
+                            <strong>
+                                {{ session.duration_minutes // 60 }}h
+                                {{ session.duration_minutes % 60 }}m
+                            </strong>
+
+                            <span>
+                                Study time
+                            </span>
+
+                        </div>
+
+
+                        <a
+    href="{{ url_for(
+        'edit_study_session',
+        session_id=session.id
+    ) }}"
+    class="study-session-edit-button"
+>
+    Edit
+</a>
+
+<button
+    type="button"
+    class="study-session-delete-button"
+    data-delete-url="{{ url_for(
+        'delete_study_session',
+        session_id=session.id
+    ) }}"
+    data-session-subject="{{ session.subject.name }}"
+    data-session-date="{{ session.study_date.strftime('%d %b %Y') }}"
+>
+    Delete
+</button>
+                    </article>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="study-log-empty-state">
+
+
+                <div class="study-log-empty-icon">
+                    ◷
+                </div>
+
+
+                <h3>
+                    No study sessions recorded yet.
+                </h3>
+
+
+                <p>
+                    Once you start logging study time,
+                    your recent sessions and study
+                    statistics will appear here.
+                </p>
+
+
+                <span>
+                    Study session creation will be
+                    enabled in the next step.
+                </span>
+
+
+            </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+</section>
+
+{% endblock %}

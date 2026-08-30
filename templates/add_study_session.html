@@ -1,0 +1,443 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Add Study Session | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Add Study Session
+{% endblock %}
+
+
+{% block content %}
+
+<section class="subject-form-page">
+
+
+    <div class="subject-form-header">
+
+        <div>
+
+            <a
+                href="{{ url_for('study_log') }}"
+                class="back-link"
+            >
+                ← Back to Study Log
+            </a>
+
+
+            <span class="dashboard-eyebrow">
+                STUDY LOG
+            </span>
+
+
+            <h1>
+                Log a study session
+            </h1>
+
+
+            <p>
+                Record the time you actually spent
+                studying and build a clearer picture
+                of your study habits.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="subject-form-layout">
+
+
+        <!-- FORM -->
+
+        <div class="subject-form-card">
+
+
+            <div class="subject-form-card-header">
+
+                <div class="form-header-icon">
+                    ◷
+                </div>
+
+                <div>
+
+                    <h2>
+                        Session Details
+                    </h2>
+
+                    <p>
+                        Add your subject, duration
+                        and study date.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <form
+                method="POST"
+                action="{{ url_for('add_study_session') }}"
+                class="subject-form"
+            >
+
+
+                <!-- SUBJECT -->
+
+                <div class="subject-form-group">
+
+                    <label for="subject_id">
+                        Subject
+                        <span>*</span>
+                    </label>
+
+
+                    {% set form_subject_id =
+                        request.form.get('subject_id')
+                    %}
+
+
+                    <select
+                        id="subject_id"
+                        name="subject_id"
+                        class="studytrack-select"
+                        required
+                    >
+
+                        <option value="">
+                            Choose a subject
+                        </option>
+
+
+                        {% for subject in subjects %}
+
+                            <option
+                                value="{{ subject.id }}"
+
+                                {% if
+                                    (
+                                        form_subject_id
+                                        and
+                                        form_subject_id | int
+                                        == subject.id
+                                    )
+                                    or
+                                    (
+                                        not form_subject_id
+                                        and
+                                        selected_subject_id
+                                        == subject.id
+                                    )
+                                %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ subject.name }}
+
+                                {% if subject.code %}
+                                    ({{ subject.code }})
+                                {% endif %}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+
+                    <small>
+                        Choose the subject you studied.
+                    </small>
+
+                </div>
+
+
+
+                <!-- DATE -->
+
+                <div class="subject-form-group">
+
+                    <label for="study_date">
+                        Study Date
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="study_date"
+                        name="study_date"
+                        max="{{ today.isoformat() }}"
+                        value="{{ request.form.get(
+                            'study_date',
+                            today.isoformat()
+                        ) }}"
+                        required
+                    >
+
+                    <small>
+                        You can also log a previous
+                        study session.
+                    </small>
+
+                </div>
+
+
+
+                <!-- DURATION -->
+
+                <div class="subject-form-group">
+
+                    <label>
+                        Study Duration
+                        <span>*</span>
+                    </label>
+
+
+                    <div class="study-duration-grid">
+
+
+                        <div>
+
+                            <label
+                                for="hours"
+                                class="duration-mini-label"
+                            >
+                                Hours
+                            </label>
+
+                            <div class="input-with-suffix">
+
+                                <input
+                                    type="number"
+                                    id="hours"
+                                    name="hours"
+                                    min="0"
+                                    max="24"
+                                    value="{{ request.form.get(
+                                        'hours',
+                                        '1'
+                                    ) }}"
+                                    required
+                                >
+
+                                <span>
+                                    hrs
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div>
+
+                            <label
+                                for="minutes"
+                                class="duration-mini-label"
+                            >
+                                Minutes
+                            </label>
+
+                            <div class="input-with-suffix">
+
+                                <input
+                                    type="number"
+                                    id="minutes"
+                                    name="minutes"
+                                    min="0"
+                                    max="59"
+                                    value="{{ request.form.get(
+                                        'minutes',
+                                        '0'
+                                    ) }}"
+                                    required
+                                >
+
+                                <span>
+                                    min
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <small>
+                        Example: 1 hour 30 minutes
+                        will be stored as 90 minutes.
+                    </small>
+
+                </div>
+
+
+
+                <!-- NOTES -->
+
+                <div class="subject-form-group">
+
+                    <label for="notes">
+                        Study Notes
+                    </label>
+
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        maxlength="300"
+                        class="study-session-textarea"
+                        placeholder="e.g. Revised normalization and practiced SQL joins"
+                    >{{ request.form.get('notes', '') }}</textarea>
+
+
+                    <small>
+                        Optional, maximum 300 characters.
+                    </small>
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="subject-form-actions">
+
+                    <a
+                        href="{{ url_for('study_log') }}"
+                        class="form-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="form-save-button"
+                    >
+                        Save Study Session
+
+                        <span>
+                            →
+                        </span>
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- GUIDE -->
+
+        <aside class="subject-form-guide">
+
+            <span class="guide-label">
+                STUDY CONSISTENCY
+            </span>
+
+
+            <h2>
+                Track real effort, not just intentions.
+            </h2>
+
+
+            <p>
+                Your study log provides the time data
+                StudyTrack will later use for progress
+                analysis and subject priorities.
+            </p>
+
+
+            <div class="guide-items">
+
+
+                <div>
+
+                    <span class="guide-number">
+                        01
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Record honestly
+                        </strong>
+
+                        <p>
+                            Log the time you actually
+                            spent studying.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        02
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Add useful notes
+                        </strong>
+
+                        <p>
+                            Mention the topics or
+                            chapters you covered.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <span class="guide-number">
+                        03
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Build consistency
+                        </strong>
+
+                        <p>
+                            Regular entries create better
+                            weekly progress insights.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+</section>
+
+{% endblock %}

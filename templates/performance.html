@@ -1,0 +1,562 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Performance | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Performance
+{% endblock %}
+
+
+{% block content %}
+
+<section class="performance-page">
+
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
+    <div class="performance-header">
+
+        <div>
+
+            <span class="dashboard-eyebrow">
+                ACADEMIC PERFORMANCE
+            </span>
+
+            <h1>
+                Performance
+            </h1>
+
+            <p>
+                Track assessment results and compare
+                your actual academic performance with
+                the targets you've set for each subject.
+            </p>
+
+        </div>
+
+
+        <a
+    href="{{ url_for('add_mark') }}"
+    class="performance-add-button"
+>
+    <span>+</span>
+    Add Marks
+</a>
+
+    </div>
+
+
+
+    <!-- =====================================
+         SUMMARY CARDS
+    ====================================== -->
+
+    <div class="performance-summary-grid">
+
+
+        <article class="performance-summary-card">
+
+            <div class="performance-summary-icon purple">
+                %
+            </div>
+
+            <div>
+
+                <span>
+                    Overall Performance
+                </span>
+
+                <strong>
+                    {{ overall_percentage }}%
+                </strong>
+
+                <small>
+                    Weighted across assessments
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="performance-summary-card">
+
+            <div class="performance-summary-icon blue">
+                #
+            </div>
+
+            <div>
+
+                <span>
+                    Assessments
+                </span>
+
+                <strong>
+                    {{ assessment_count }}
+                </strong>
+
+                <small>
+                    Results recorded
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="performance-summary-card">
+
+            <div class="performance-summary-icon green">
+                S
+            </div>
+
+            <div>
+
+                <span>
+                    Subjects
+                </span>
+
+                <strong>
+                    {{ subjects | length }}
+                </strong>
+
+                <small>
+                    Academic subjects tracked
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="performance-summary-card">
+
+            <div class="performance-summary-icon orange">
+                ✓
+            </div>
+
+            <div>
+
+                <span>
+                    Marks Recorded
+                </span>
+
+                <strong>
+                    {{ total_marks_obtained | round(1) }}
+                </strong>
+
+                <small>
+                    Out of
+                    {{ total_maximum_marks | round(1) }}
+                </small>
+
+            </div>
+
+        </article>
+
+
+    </div>
+
+
+
+    <!-- =====================================
+         SUBJECT PERFORMANCE
+    ====================================== -->
+
+    <section class="dashboard-panel performance-subject-panel">
+
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="panel-label">
+                    SUBJECT ANALYSIS
+                </span>
+
+                <h2>
+                    Subject Performance
+                </h2>
+
+            </div>
+
+        </div>
+
+
+
+        {% if subject_performance %}
+
+
+            <div class="performance-subject-grid">
+
+
+                {% for item in subject_performance %}
+
+
+                    <article class="performance-subject-card">
+
+
+                        <div class="performance-subject-top">
+
+
+                            <div class="performance-subject-icon">
+
+                                {{
+                                    item.subject.name[0]
+                                    | upper
+                                }}
+
+                            </div>
+
+
+                            <div>
+
+                                <h3>
+                                    {{ item.subject.name }}
+                                </h3>
+
+
+                                {% if item.subject.code %}
+
+                                    <span>
+                                        {{ item.subject.code }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="performance-score-row">
+
+
+                            <div>
+
+                                <span>
+                                    Current
+                                </span>
+
+                                <strong>
+                                    {{
+                                        item.current_percentage
+                                    }}%
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Target
+                                </span>
+
+                                <strong>
+                                    {{
+                                        item.subject.target_marks
+                                    }}%
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Assessments
+                                </span>
+
+                                <strong>
+                                    {{
+                                        item.assessment_count
+                                    }}
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        {% if item.assessment_count > 0 %}
+
+
+                            <div class="performance-target-track">
+
+                                <div
+                                    class="performance-current-fill"
+                                    style="width:
+                                    {{
+                                        [
+                                            item.current_percentage,
+                                            100
+                                        ] | min
+                                    }}%;"
+                                >
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="performance-comparison">
+
+
+                                {% if item.difference >= 0 %}
+
+                                    <span class="comparison-positive">
+                                        +{{ item.difference }}%
+                                        above target
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="comparison-negative">
+                                        {{ item.difference }}%
+                                        below target
+                                    </span>
+
+                                {% endif %}
+
+
+                            </div>
+
+
+                        {% else %}
+
+
+                            <div class="subject-no-marks">
+
+                                <span>
+                                    No assessment data yet
+                                </span>
+
+                                <p>
+                                    Target:
+                                    {{ item.subject.target_marks }}%
+                                </p>
+
+                            </div>
+
+
+                        {% endif %}
+
+
+                    </article>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="performance-empty-state">
+
+                <div>
+                    S
+                </div>
+
+                <h3>
+                    Add a subject first.
+                </h3>
+
+                <p>
+                    Academic performance will be
+                    organised by subject.
+                </p>
+
+                <a href="{{ url_for('add_subject') }}">
+                    Add Subject
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         RECENT ASSESSMENTS
+    ====================================== -->
+
+    <section class="dashboard-panel performance-history-panel">
+
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="panel-label">
+                    ASSESSMENT HISTORY
+                </span>
+
+                <h2>
+                    Recent Assessments
+                </h2>
+
+            </div>
+
+
+            {% if marks %}
+
+                <span class="performance-record-count">
+                    {{ assessment_count }}
+                    total
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+
+        {% if recent_marks %}
+
+
+            <div class="performance-mark-list">
+
+
+                {% for mark in recent_marks %}
+
+
+                    <article class="performance-mark-row">
+
+
+                        <div class="performance-date-card">
+
+                            <strong>
+                                {{
+                                    mark.assessment_date
+                                    .strftime('%d')
+                                }}
+                            </strong>
+
+                            <span>
+                                {{
+                                    mark.assessment_date
+                                    .strftime('%b')
+                                }}
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="performance-mark-info">
+
+                            <strong>
+                                {{ mark.assessment_name }}
+                            </strong>
+
+                            <span>
+                                {{ mark.subject.name }}
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="performance-mark-score">
+
+                            <strong>
+                                {{ mark.marks_obtained }}
+                                /
+                                {{ mark.maximum_marks }}
+                            </strong>
+
+                            <span>
+                                {{ mark.percentage }}%
+                            </span>
+
+                        </div>
+
+<a
+    href="{{ url_for(
+        'edit_mark',
+        mark_id=mark.id
+    ) }}"
+    class="performance-mark-edit"
+>
+    Edit
+</a>
+
+<button
+    type="button"
+    class="performance-mark-delete"
+    data-delete-url="{{ url_for(
+        'delete_mark',
+        mark_id=mark.id
+    ) }}"
+    data-assessment-name="{{ mark.assessment_name }}"
+    data-subject-name="{{ mark.subject.name }}"
+>
+    Delete
+</button>
+
+                    </article>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="performance-empty-state large">
+
+                <div>
+                    %
+                </div>
+
+                <h3>
+                    No assessment results yet.
+                </h3>
+
+                <p>
+                    Once you add marks, your academic
+                    performance and subject comparisons
+                    will appear here.
+                </p>
+
+                <span>
+                    Mark entry will be enabled
+                    in the next step.
+                </span>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,629 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Study Planner | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Study Planner
+{% endblock %}
+
+
+{% block content %}
+
+<section class="planner-page">
+
+
+    <!-- HEADER -->
+
+    <div class="planner-header">
+
+        <div>
+
+            <span class="dashboard-eyebrow">
+                PLAN YOUR STUDY TIME
+            </span>
+
+            <h1>
+                Study Planner
+            </h1>
+
+            <p>
+                Organise upcoming work, manage deadlines
+                and keep track of completed study tasks.
+            </p>
+
+        </div>
+
+
+        <a
+    href="{{ url_for('add_task') }}"
+    class="planner-add-button"
+>
+    <span>+</span>
+    Create Task
+</a>
+    </div>
+
+
+
+    <!-- SUMMARY -->
+
+    <div class="planner-summary-grid">
+
+
+        <article class="planner-summary-card">
+
+            <div class="planner-summary-icon pending">
+                ◷
+            </div>
+
+            <div>
+
+                <span>
+                    Pending
+                </span>
+
+                <strong>
+                    {{ pending_tasks | length }}
+                </strong>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="planner-summary-card">
+
+            <div class="planner-summary-icon overdue">
+                !
+            </div>
+
+            <div>
+
+                <span>
+                    Overdue
+                </span>
+
+                <strong>
+                    {{ overdue_tasks | length }}
+                </strong>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="planner-summary-card">
+
+            <div class="planner-summary-icon completed">
+                ✓
+            </div>
+
+            <div>
+
+                <span>
+                    Completed
+                </span>
+
+                <strong>
+                    {{ completed_tasks | length }}
+                </strong>
+
+            </div>
+
+        </article>
+
+
+    </div>
+
+
+
+    <!-- PENDING TASKS -->
+
+    <section class="planner-section">
+
+        <div class="planner-section-heading">
+
+            <div>
+
+                <span class="planner-section-label">
+                    UP NEXT
+                </span>
+
+                <h2>
+                    Pending Tasks
+                </h2>
+
+            </div>
+
+
+            <span class="task-count-badge">
+                {{ pending_tasks | length }}
+            </span>
+
+        </div>
+
+
+        {% if pending_tasks %}
+
+            <div class="planner-task-list">
+
+                {% for task in pending_tasks %}
+
+                    <article class="planner-task-card">
+
+                        <div
+                            class="planner-task-priority
+                            priority-{{ task.priority | lower }}"
+                        >
+                            {{ task.priority }}
+                        </div>
+
+
+                        <div class="planner-task-main">
+
+                            <div class="planner-task-title">
+
+                                <h3>
+                                    {{ task.task_name }}
+                                </h3>
+
+                                <span class="task-status pending">
+                                    Pending
+                                </span>
+
+                            </div>
+
+
+                            <div class="planner-task-meta">
+
+                                <span>
+                                    {{ task.subject.name }}
+                                </span>
+
+                                <span class="meta-dot">
+                                    •
+                                </span>
+
+                                <span>
+                                    Due
+                                    {{ task.deadline.strftime('%d %b %Y') }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <a
+    href="{{ url_for(
+        'edit_task',
+        task_id=task.id
+    ) }}"
+    class="task-edit-button"
+>
+    Edit
+</a>
+
+                        <form
+    method="POST"
+    action="{{ url_for(
+        'complete_task',
+        task_id=task.id
+    ) }}"
+    class="complete-task-form"
+>
+
+    <button
+        type="submit"
+        class="complete-task-button"
+        title="Mark task as completed"
+    >
+        <span>✓</span>
+        Complete
+    </button>
+
+</form>
+
+<button
+    type="button"
+    class="task-delete-button"
+    data-delete-url="{{ url_for(
+        'delete_task',
+        task_id=task.id
+    ) }}"
+    data-task-name="{{ task.task_name }}"
+>
+    Delete
+</button>
+
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="planner-empty-state">
+
+                <div class="planner-empty-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <strong>
+                        Nothing pending.
+                    </strong>
+
+                    <p>
+                        Create your first study task
+                        to start planning your schedule.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+
+    <!-- OVERDUE TASKS -->
+
+    <section class="planner-section">
+
+        <div class="planner-section-heading">
+
+            <div>
+
+                <span class="planner-section-label overdue-label">
+                    NEEDS ATTENTION
+                </span>
+
+                <h2>
+                    Overdue Tasks
+                </h2>
+
+            </div>
+
+
+            <span class="task-count-badge overdue-count">
+                {{ overdue_tasks | length }}
+            </span>
+
+        </div>
+
+
+        {% if overdue_tasks %}
+
+            <div class="planner-task-list">
+
+                {% for task in overdue_tasks %}
+
+                    <article
+                        class="planner-task-card overdue-task"
+                    >
+
+                        <div
+                            class="planner-task-priority
+                            priority-{{ task.priority | lower }}"
+                        >
+                            {{ task.priority }}
+                        </div>
+
+
+                        <div class="planner-task-main">
+
+                            <div class="planner-task-title">
+
+                                <h3>
+                                    {{ task.task_name }}
+                                </h3>
+
+                                <span class="task-status overdue">
+                                    Overdue
+                                </span>
+
+                            </div>
+
+
+                            <div class="planner-task-meta">
+
+                                <span>
+                                    {{ task.subject.name }}
+                                </span>
+
+                                <span class="meta-dot">
+                                    •
+                                </span>
+
+                                <span>
+                                    Was due
+                                    {{ task.deadline.strftime('%d %b %Y') }}
+                                </span>
+
+                            </div>
+
+                        </div>
+                        <a
+    href="{{ url_for(
+        'edit_task',
+        task_id=task.id
+    ) }}"
+    class="task-edit-button"
+>
+    Edit
+</a>
+                        <form
+    method="POST"
+    action="{{ url_for(
+        'complete_task',
+        task_id=task.id
+    ) }}"
+    class="complete-task-form"
+>
+
+    <button
+        type="submit"
+        class="complete-task-button overdue-complete"
+    >
+        <span>✓</span>
+        Complete
+    </button>
+
+</form>
+<button
+    type="button"
+    class="task-delete-button"
+    data-delete-url="{{ url_for(
+        'delete_task',
+        task_id=task.id
+    ) }}"
+    data-task-name="{{ task.task_name }}"
+>
+    Delete
+</button>
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="planner-empty-state">
+
+                <div class="planner-empty-icon success">
+                    ✓
+                </div>
+
+                <div>
+
+                    <strong>
+                        You're caught up.
+                    </strong>
+
+                    <p>
+                        There are no overdue tasks
+                        requiring your attention.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+
+    <!-- COMPLETED TASKS -->
+
+    <section class="planner-section">
+
+        <div class="planner-section-heading">
+
+            <div>
+
+                <span class="planner-section-label completed-label">
+                    PROGRESS
+                </span>
+
+                <h2>
+                    Completed Tasks
+                </h2>
+
+            </div>
+
+
+            <span class="task-count-badge completed-count">
+                {{ completed_tasks | length }}
+            </span>
+
+        </div>
+
+
+        {% if completed_tasks %}
+
+            <div class="planner-task-list">
+
+                {% for task in completed_tasks %}
+
+                    <article
+                        class="planner-task-card completed-task"
+                    >
+
+                        <div class="completed-task-check">
+                            ✓
+                        </div>
+
+
+                        <div class="planner-task-main">
+
+                            <div class="planner-task-title">
+
+                                <h3>
+                                    {{ task.task_name }}
+                                </h3>
+
+                                <span class="task-status completed">
+                                    Completed
+                                </span>
+
+                            </div>
+
+
+                            <div class="planner-task-meta">
+
+                                <span>
+                                    {{ task.subject.name }}
+                                </span>
+
+                                <span class="meta-dot">
+                                    •
+                                </span>
+
+                                <span>
+                                    {{ task.deadline.strftime('%d %b %Y') }}
+                                </span>
+
+                            </div>
+
+                        </div>
+  <button
+        type="button"
+        class="task-delete-button"
+        data-delete-url="{{ url_for(
+            'delete_task',
+            task_id=task.id
+        ) }}"
+        data-task-name="{{ task.task_name }}"
+    >
+        Delete
+    </button>
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="planner-empty-state">
+
+                <div class="planner-empty-icon muted">
+                    ◷
+                </div>
+
+                <div>
+
+                    <strong>
+                        No completed tasks yet.
+                    </strong>
+
+                    <p>
+                        Finished study tasks will
+                        appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+
+
+
+
+</section>
+
+<!-- =====================================
+     DELETE TASK CONFIRMATION MODAL
+====================================== -->
+
+<div
+    class="task-delete-modal-overlay"
+    id="taskDeleteModalOverlay"
+>
+
+    <div class="task-delete-modal">
+
+        <div class="task-delete-modal-icon">
+            !
+        </div>
+
+
+        <span class="task-delete-modal-label">
+            DELETE TASK
+        </span>
+
+
+        <h2>
+            Delete this study task?
+        </h2>
+
+
+        <p>
+            You are about to permanently delete
+            <strong id="deleteTaskName">
+                this task
+            </strong>.
+        </p>
+
+
+        <p class="task-delete-warning">
+            This action cannot be undone.
+        </p>
+
+
+        <div class="task-delete-modal-actions">
+
+
+            <button
+                type="button"
+                class="task-delete-cancel-button"
+                id="taskDeleteCancelButton"
+            >
+                Cancel
+            </button>
+
+
+            <form
+                method="POST"
+                id="deleteTaskForm"
+            >
+
+                <button
+                    type="submit"
+                    class="task-delete-confirm-button"
+                >
+                    Delete Task
+                </button>
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

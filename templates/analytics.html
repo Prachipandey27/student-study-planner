@@ -1,0 +1,939 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+Analytics | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Analytics
+{% endblock %}
+
+
+{% block content %}
+
+<section class="analytics-page">
+
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
+    <div class="analytics-header">
+
+        <div>
+
+            <span class="dashboard-eyebrow">
+                STUDY ANALYTICS
+            </span>
+
+            <h1>
+                Analytics
+            </h1>
+
+            <p>
+                Visualise your study activity,
+                academic performance, attendance
+                and task completion across subjects.
+            </p>
+
+        </div>
+
+
+        <div class="analytics-subject-count">
+
+            <span>
+                SUBJECTS TRACKED
+            </span>
+
+            <strong>
+                {{ subject_count }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         SUMMARY
+    ====================================== -->
+
+    <div class="analytics-summary-grid">
+
+
+        <article class="analytics-summary-card">
+
+            <div class="analytics-summary-icon purple">
+                ◷
+            </div>
+
+            <div>
+
+                <span>
+                    Total Study Hours
+                </span>
+
+                <strong>
+                    {{ total_study_hours }}h
+                </strong>
+
+                <small>
+                    Logged study time
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="analytics-summary-card">
+
+            <div class="analytics-summary-icon blue">
+                %
+            </div>
+
+            <div>
+
+                <span>
+                    Performance
+                </span>
+
+                <strong>
+                    {{ overall_performance }}%
+                </strong>
+
+                <small>
+                    Overall academic score
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="analytics-summary-card">
+
+            <div class="analytics-summary-icon green">
+                ✓
+            </div>
+
+            <div>
+
+                <span>
+                    Attendance
+                </span>
+
+                <strong>
+                    {{ overall_attendance }}%
+                </strong>
+
+                <small>
+                    Overall attendance
+                </small>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="analytics-summary-card">
+
+            <div class="analytics-summary-icon orange">
+                ✓
+            </div>
+
+            <div>
+
+                <span>
+                    Task Completion
+                </span>
+
+                <strong>
+                    {{ overall_task_completion }}%
+                </strong>
+
+                <small>
+                    Tasks completed
+                </small>
+
+            </div>
+
+        </article>
+
+
+    </div>
+
+
+
+    {% if subject_analytics %}
+
+
+        <!-- =====================================
+             CHART ROW 1
+        ====================================== -->
+
+        <div class="analytics-chart-grid">
+
+
+            <!-- STUDY HOURS -->
+
+            <section class="dashboard-panel analytics-chart-card">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="panel-label">
+                            STUDY ACTIVITY
+                        </span>
+
+                        <h2>
+                            Study Hours by Subject
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="analytics-chart-wrapper">
+
+                    <canvas id="studyHoursChart">
+                    </canvas>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- PERFORMANCE -->
+
+            <section class="dashboard-panel analytics-chart-card">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="panel-label">
+                            ACADEMIC RESULTS
+                        </span>
+
+                        <h2>
+                            Performance by Subject
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="analytics-chart-wrapper">
+
+                    <canvas id="performanceChart">
+                    </canvas>
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- =====================================
+             CHART ROW 2
+        ====================================== -->
+
+        <div class="analytics-chart-grid">
+
+
+            <!-- ATTENDANCE -->
+
+            <section class="dashboard-panel analytics-chart-card">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="panel-label">
+                            ATTENDANCE
+                        </span>
+
+                        <h2>
+                            Attendance by Subject
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="analytics-chart-wrapper">
+
+                    <canvas id="attendanceChart">
+                    </canvas>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- TASK COMPLETION -->
+
+            <section class="dashboard-panel analytics-chart-card">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="panel-label">
+                            STUDY PLANNER
+                        </span>
+
+                        <h2>
+                            Task Completion by Subject
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="analytics-chart-wrapper">
+
+                    <canvas id="taskChart">
+                    </canvas>
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- =====================================
+             SUBJECT DATA TABLE
+        ====================================== -->
+
+        <section class="dashboard-panel analytics-table-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        SUBJECT BREAKDOWN
+                    </span>
+
+                    <h2>
+                        Academic Summary
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="analytics-table-wrapper">
+
+                <table class="analytics-table">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Subject
+                            </th>
+
+                            <th>
+                                Study Hours
+                            </th>
+
+                            <th>
+                                Performance
+                            </th>
+
+                            <th>
+                                Attendance
+                            </th>
+
+                            <th>
+                                Tasks
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+
+                    <tbody>
+
+
+                        {% for item in subject_analytics %}
+
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="analytics-subject-cell">
+
+                                        <span>
+                                            {{ item.name[0] | upper }}
+                                        </span>
+
+                                        <div>
+
+                                            <strong>
+                                                {{ item.name }}
+                                            </strong>
+
+
+                                            {% if item.code %}
+
+                                                <small>
+                                                    {{ item.code }}
+                                                </small>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    {{ item.study_hours }}h
+                                </td>
+
+
+                                <td>
+                                    {{ item.performance }}%
+                                </td>
+
+
+                                <td>
+                                    {{ item.attendance }}%
+                                </td>
+
+
+                                <td>
+                                    {{ item.task_completion }}%
+                                </td>
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+            </div>
+
+
+        </section>
+
+
+    {% else %}
+
+
+        <!-- =====================================
+             EMPTY STATE
+        ====================================== -->
+
+        <section class="dashboard-panel">
+
+            <div class="analytics-empty-state">
+
+                <div>
+                    ↗
+                </div>
+
+                <h2>
+                    No analytics available yet.
+                </h2>
+
+                <p>
+                    Add subjects and start recording
+                    your study activity to generate
+                    analytics.
+                </p>
+
+                <a href="{{ url_for('add_subject') }}">
+                    Add Subject
+                </a>
+
+            </div>
+
+        </section>
+
+
+    {% endif %}
+
+
+</section>
+
+
+
+{% if subject_analytics %}
+
+
+<!-- =====================================
+     CHART.JS
+====================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js"
+></script>
+
+
+<script>
+
+    const analyticsLabels =
+        {{ chart_labels | tojson }};
+
+
+    const studyHoursData =
+        {{ study_hours_data | tojson }};
+
+
+    const performanceData =
+        {{ performance_data | tojson }};
+
+
+    const attendanceData =
+        {{ attendance_data | tojson }};
+
+
+    const taskCompletionData =
+        {{ task_completion_data | tojson }};
+
+
+
+    // ========================================
+    // COMMON CHART SETTINGS
+    // ========================================
+
+    Chart.defaults.font.family =
+        "'DM Sans', sans-serif";
+
+
+    Chart.defaults.color =
+        "#696b7b";
+
+
+    const analyticsGridColor =
+        "rgba(105, 107, 123, 0.08)";
+
+
+    const primaryColor =
+        "#6c5ce7";
+
+
+    const secondaryColor =
+        "#16c79a";
+
+
+    const warningColor =
+        "#ff9f43";
+
+
+    const blueColor =
+        "#3988e7";
+
+
+
+    // ========================================
+    // STUDY HOURS
+    // ========================================
+
+    new Chart(
+        document.getElementById(
+            "studyHoursChart"
+        ),
+        {
+            type: "bar",
+
+            data: {
+
+                labels:
+                    analyticsLabels,
+
+                datasets: [
+                    {
+                        label:
+                            "Study Hours",
+
+                        data:
+                            studyHoursData,
+
+                        backgroundColor:
+                            primaryColor,
+
+                        borderRadius:
+                            7,
+
+                        borderSkipped:
+                            false
+                    }
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        grid: {
+                            color:
+                                analyticsGridColor
+                        },
+
+                        ticks: {
+                            precision: 0
+                        }
+
+                    },
+
+                    x: {
+
+                        grid: {
+                            display: false
+                        }
+
+                    }
+
+                }
+
+            }
+        }
+    );
+
+
+
+    // ========================================
+    // PERFORMANCE
+    // ========================================
+
+    new Chart(
+        document.getElementById(
+            "performanceChart"
+        ),
+        {
+            type: "bar",
+
+            data: {
+
+                labels:
+                    analyticsLabels,
+
+                datasets: [
+                    {
+                        label:
+                            "Performance %",
+
+                        data:
+                            performanceData,
+
+                        backgroundColor:
+                            blueColor,
+
+                        borderRadius:
+                            7,
+
+                        borderSkipped:
+                            false
+                    }
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        max: 100,
+
+                        grid: {
+                            color:
+                                analyticsGridColor
+                        },
+
+                        ticks: {
+
+                            callback:
+                                function(value) {
+
+                                    return value + "%";
+
+                                }
+
+                        }
+
+                    },
+
+                    x: {
+
+                        grid: {
+                            display: false
+                        }
+
+                    }
+
+                }
+
+            }
+        }
+    );
+
+
+
+    // ========================================
+    // ATTENDANCE
+    // ========================================
+
+    new Chart(
+        document.getElementById(
+            "attendanceChart"
+        ),
+        {
+            type: "bar",
+
+            data: {
+
+                labels:
+                    analyticsLabels,
+
+                datasets: [
+                    {
+                        label:
+                            "Attendance %",
+
+                        data:
+                            attendanceData,
+
+                        backgroundColor:
+                            secondaryColor,
+
+                        borderRadius:
+                            7,
+
+                        borderSkipped:
+                            false
+                    }
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        max: 100,
+
+                        grid: {
+                            color:
+                                analyticsGridColor
+                        },
+
+                        ticks: {
+
+                            callback:
+                                function(value) {
+
+                                    return value + "%";
+
+                                }
+
+                        }
+
+                    },
+
+                    x: {
+
+                        grid: {
+                            display: false
+                        }
+
+                    }
+
+                }
+
+            }
+        }
+    );
+
+
+
+    // ========================================
+    // TASK COMPLETION
+    // ========================================
+
+    new Chart(
+        document.getElementById(
+            "taskChart"
+        ),
+        {
+            type: "bar",
+
+            data: {
+
+                labels:
+                    analyticsLabels,
+
+                datasets: [
+                    {
+                        label:
+                            "Task Completion %",
+
+                        data:
+                            taskCompletionData,
+
+                        backgroundColor:
+                            warningColor,
+
+                        borderRadius:
+                            7,
+
+                        borderSkipped:
+                            false
+                    }
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        max: 100,
+
+                        grid: {
+                            color:
+                                analyticsGridColor
+                        },
+
+                        ticks: {
+
+                            callback:
+                                function(value) {
+
+                                    return value + "%";
+
+                                }
+
+                        }
+
+                    },
+
+                    x: {
+
+                        grid: {
+                            display: false
+                        }
+
+                    }
+
+                }
+
+            }
+        }
+    );
+
+</script>
+
+
+{% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,1491 @@
+{% extends "app_base.html" %}
+
+
+{% block title %}
+{{ subject.name }} | StudyTrack
+{% endblock %}
+
+
+{% block page_name %}
+Subject Workspace
+{% endblock %}
+
+
+{% block content %}
+
+<section class="subject-detail-page">
+
+
+    <!-- TOP HEADER -->
+
+    <div class="subject-detail-header">
+
+        <div>
+
+            <a
+                href="{{ url_for('subjects') }}"
+                class="back-link"
+            >
+                ← Back to Subjects
+            </a>
+
+            <span class="dashboard-eyebrow">
+                SUBJECT WORKSPACE
+            </span>
+
+            <div class="subject-title-row">
+
+                <div class="subject-detail-icon">
+                    {{ subject.name[0] | upper }}
+                </div>
+
+                <div>
+
+                    <h1>
+                        {{ subject.name }}
+                    </h1>
+
+                    {% if subject.code %}
+
+                        <span class="subject-detail-code">
+                            {{ subject.code }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{{ url_for(
+                'edit_subject',
+                subject_id=subject.id
+            ) }}"
+            class="subject-detail-edit"
+        >
+            Edit Subject
+        </a>
+
+    </div>
+
+
+
+    <!-- TARGET CARDS -->
+
+    <div class="subject-detail-stats">
+
+        <article>
+
+            <span>
+                Target Marks
+            </span>
+
+            <strong>
+                {{ subject.target_marks }}%
+            </strong>
+
+            <small>
+                Desired performance
+            </small>
+
+        </article>
+
+
+        <article>
+
+            <span>
+                Weekly Study Target
+            </span>
+
+            <strong>
+                {{ subject.target_study_hours }}h
+            </strong>
+
+            <small>
+                Planned study time
+            </small>
+
+        </article>
+
+
+        <article>
+
+    <span>
+        Study This Week
+    </span>
+
+    <strong>
+        {{ subject_week_minutes // 60 }}h
+        {{ subject_week_minutes % 60 }}m
+    </strong>
+
+    <small>
+        {{ subject_week_progress }}%
+        of weekly target
+    </small>
+
+</article>
+
+
+        <article>
+
+    <span>
+        Current Average
+    </span>
+
+
+    {% if subject_marks %}
+
+        <strong>
+            {{ subject_current_percentage }}%
+        </strong>
+
+        <small>
+            {{ assessment_count }}
+            assessment{% if assessment_count != 1 %}s{% endif %}
+            recorded
+        </small>
+
+    {% else %}
+
+        <strong>
+            --
+        </strong>
+
+        <small>
+            Add marks to calculate
+        </small>
+
+    {% endif %}
+
+</article>
+
+<article>
+
+    <span>
+        Attendance
+    </span>
+
+
+    {% if subject_attendance_records %}
+
+        <strong>
+            {{ subject_attendance_percentage }}%
+        </strong>
+
+        <small>
+            {{ subject_classes_attended }}
+            of
+            {{ subject_classes_held }}
+            classes attended
+        </small>
+
+    {% else %}
+
+        <strong>
+            --
+        </strong>
+
+        <small>
+            No attendance records yet
+        </small>
+
+    {% endif %}
+
+</article>
+
+    </div>
+
+
+
+    <!-- MAIN SUBJECT WORKSPACE -->
+
+    <div class="subject-workspace-grid">
+
+
+        <!-- PERFORMANCE -->
+
+        <section class="dashboard-panel subject-workspace-large">
+
+
+    <div class="panel-header">
+
+        <div>
+
+            <span class="panel-label">
+                PERFORMANCE
+            </span>
+
+            <h2>
+                Subject Progress
+            </h2>
+
+        </div>
+
+
+        {% if subject_marks %}
+
+            <span class="panel-tag">
+                {{ assessment_count }}
+                Assessment{% if assessment_count != 1 %}s{% endif %}
+            </span>
+
+        {% else %}
+
+            <span class="panel-tag">
+                No Data
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+
+    {% if subject_marks %}
+
+
+        <div class="subject-performance-overview">
+
+
+            <!-- PERFORMANCE RING -->
+
+            <div
+                class="subject-progress-ring"
+                style="
+                    background:
+                    conic-gradient(
+                        var(--primary)
+                        {{ subject_current_percentage }}%,
+                        #eeeef5
+                        0
+                    );
+                "
+            >
+
+                <div>
+
+                    <strong>
+                        {{ subject_current_percentage }}%
+                    </strong>
+
+                    <span>
+                        Average
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PERFORMANCE DETAILS -->
+
+            <div class="subject-performance-details">
+
+                <span class="subject-performance-label">
+                    CURRENT PERFORMANCE
+                </span>
+
+
+                <h3>
+
+                    {% if subject_target_difference >= 0 %}
+
+                        You're meeting your target.
+
+                    {% else %}
+
+                        Your current average is below target.
+
+                    {% endif %}
+
+                </h3>
+
+
+                <p>
+                    You have scored
+
+                    <strong>
+                        {{ subject_marks_obtained | round(1) }}
+                    </strong>
+
+                    marks out of
+
+                    <strong>
+                        {{ subject_maximum_marks | round(1) }}
+                    </strong>
+
+                    across
+
+                    <strong>
+                        {{ assessment_count }}
+                    </strong>
+
+                    assessment{% if assessment_count != 1 %}s{% endif %}.
+                </p>
+
+
+
+                <div class="subject-performance-metrics">
+
+
+                    <div>
+
+                        <span>
+                            Current
+                        </span>
+
+                        <strong>
+                            {{ subject_current_percentage }}%
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Target
+                        </span>
+
+                        <strong>
+                            {{ subject.target_marks }}%
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Difference
+                        </span>
+
+
+                        {% if subject_target_difference >= 0 %}
+
+                            <strong class="subject-positive">
+                                +{{ subject_target_difference }}%
+                            </strong>
+
+                        {% else %}
+
+                            <strong class="subject-negative">
+                                {{ subject_target_difference }}%
+                            </strong>
+
+                        {% endif %}
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- RECENT ASSESSMENTS -->
+
+        <div class="subject-assessment-area">
+
+
+            <div class="subject-assessment-heading">
+
+                <strong>
+                    Recent Assessments
+                </strong>
+
+
+                <a
+                    href="{{ url_for(
+                        'add_mark',
+                        subject_id=subject.id
+                    ) }}"
+                >
+                    + Add Result
+                </a>
+
+            </div>
+
+
+
+            <div class="subject-assessment-list">
+
+
+                {% for mark in recent_subject_marks %}
+
+
+                    <article class="subject-assessment-row">
+
+
+                        <div class="subject-assessment-date">
+
+                            <strong>
+                                {{
+                                    mark.assessment_date
+                                    .strftime('%d')
+                                }}
+                            </strong>
+
+                            <span>
+                                {{
+                                    mark.assessment_date
+                                    .strftime('%b')
+                                }}
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="subject-assessment-info">
+
+                            <strong>
+                                {{ mark.assessment_name }}
+                            </strong>
+
+                            <span>
+                                {{ mark.marks_obtained }}
+                                /
+                                {{ mark.maximum_marks }}
+                            </span>
+
+                        </div>
+
+
+
+                        <span class="subject-assessment-percentage">
+                            {{ mark.percentage }}%
+                        </span>
+
+                        <a
+    href="{{ url_for(
+        'edit_mark',
+        mark_id=mark.id
+    ) }}"
+    class="subject-task-link"
+>
+    Edit
+</a>
+
+<button
+    type="button"
+    class="subject-mark-delete"
+    data-delete-url="{{ url_for(
+        'delete_mark',
+        mark_id=mark.id
+    ) }}"
+    data-assessment-name="{{ mark.assessment_name }}"
+    data-subject-name="{{ subject.name }}"
+>
+    Delete
+</button>
+
+
+                    </article>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        </div>
+
+
+    {% else %}
+
+
+        <div class="subject-progress-empty">
+
+            <div class="subject-progress-ring">
+
+                <div>
+
+                    <strong>
+                        0%
+                    </strong>
+
+                    <span>
+                        Average
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Start building your performance history.
+                </h3>
+
+                <p>
+                    Add assessment results for
+                    {{ subject.name }} to compare your
+                    actual performance with your target.
+                </p>
+
+
+                <a
+                    href="{{ url_for(
+                        'add_mark',
+                        subject_id=subject.id
+                    ) }}"
+                    class="subject-performance-add"
+                >
+                    + Add First Result
+                </a>
+
+            </div>
+
+        </div>
+
+
+    {% endif %}
+
+
+</section>
+
+
+
+
+        <!-- QUICK ACTIONS -->
+
+        <section class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        SUBJECT ACTIONS
+                    </span>
+
+                    <h2>
+                        Add Academic Data
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="subject-action-list">
+
+                <a
+    href="{{ url_for(
+        'add_mark',
+        subject_id=subject.id
+    ) }}"
+    class="subject-action-link"
+>
+
+    <span class="subject-action-icon purple">
+        +
+    </span>
+
+
+    <div>
+
+        <strong>
+            Add Marks
+        </strong>
+
+        <small>
+            Record exam performance
+        </small>
+
+    </div>
+
+
+    <span>
+        →
+    </span>
+
+</a>
+
+
+                <a
+    href="{{ url_for(
+        'add_study_session',
+        subject_id=subject.id
+    ) }}"
+    class="subject-action-link"
+>
+
+    <span class="subject-action-icon orange">
+        ◷
+    </span>
+
+
+    <div>
+
+        <strong>
+            Log Study Session
+        </strong>
+
+        <small>
+            Add study hours
+        </small>
+
+    </div>
+
+
+    <span>
+        →
+    </span>
+
+</a>
+
+<a
+    href="{{ url_for(
+        'add_attendance',
+        subject_id=subject.id
+    ) }}"
+    class="subject-action-link"
+>
+
+    <span class="subject-action-icon green">
+        ✓
+    </span>
+
+
+    <div>
+
+        <strong>
+            Add Attendance
+        </strong>
+
+        <small>
+            Record class attendance
+        </small>
+
+    </div>
+
+
+    <span>
+        →
+    </span>
+
+</a>
+
+                <a
+    href="{{ url_for(
+        'add_task',
+        subject_id=subject.id
+    ) }}"
+    class="subject-action-link"
+>
+
+    <span class="subject-action-icon blue">
+        ✓
+    </span>
+
+
+    <div>
+
+        <strong>
+            Create Study Task
+        </strong>
+
+        <small>
+            Plan work for this subject
+        </small>
+
+    </div>
+
+
+    <span>→</span>
+
+</a>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- SUBJECT ATTENDANCE -->
+
+    <section class="dashboard-panel subject-attendance-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="panel-label">
+                    ATTENDANCE
+                </span>
+
+                <h2>
+                    Attendance Overview
+                </h2>
+
+            </div>
+
+
+            {% if subject_attendance_records %}
+
+                <span class="panel-tag">
+                    {{ attendance_record_count }}
+                    Record{% if attendance_record_count != 1 %}s{% endif %}
+                </span>
+
+            {% else %}
+
+                <span class="panel-tag">
+                    No Data
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if subject_attendance_records %}
+
+            <div class="subject-attendance-overview">
+
+                <div
+                    class="subject-attendance-ring"
+                    style="
+                        --subject-attendance:
+                        {{ subject_attendance_percentage }}%;
+                    "
+                >
+
+                    <div>
+
+                        <strong>
+                            {{ subject_attendance_percentage }}%
+                        </strong>
+
+                        <span>
+                            attendance
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="subject-attendance-details">
+
+                    <span class="subject-performance-label">
+                        CURRENT ATTENDANCE
+                    </span>
+
+                    <h3>
+                        {{ subject_classes_attended }}
+                        out of
+                        {{ subject_classes_held }}
+                        classes attended
+                    </h3>
+
+                    <p>
+                        Your attendance percentage is calculated
+                        from the combined class totals recorded
+                        for {{ subject.name }}.
+                    </p>
+
+
+                    <div class="subject-attendance-metrics">
+
+                        <div>
+
+                            <span>
+                                Attended
+                            </span>
+
+                            <strong>
+                                {{ subject_classes_attended }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Held
+                            </span>
+
+                            <strong>
+                                {{ subject_classes_held }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Records
+                            </span>
+
+                            <strong>
+                                {{ attendance_record_count }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="subject-attendance-history">
+
+                <div class="subject-assessment-heading">
+
+                    <strong>
+                        Recent Attendance
+                    </strong>
+
+                    <a
+                        href="{{ url_for(
+                            'add_attendance',
+                            subject_id=subject.id
+                        ) }}"
+                    >
+                        + Add Attendance
+                    </a>
+
+                </div>
+
+
+                <div class="subject-attendance-list">
+
+                    {% for record in recent_subject_attendance %}
+
+                        <article class="subject-attendance-row">
+
+                            <div class="subject-assessment-date">
+
+                                <strong>
+                                    {{
+                                        record.attendance_date
+                                        .strftime('%d')
+                                    }}
+                                </strong>
+
+                                <span>
+                                    {{
+                                        record.attendance_date
+                                        .strftime('%b')
+                                    }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="subject-attendance-info">
+
+                                <strong>
+                                    {{ record.classes_attended }}
+                                    /
+                                    {{ record.classes_held }}
+                                    classes
+                                </strong>
+
+                                {% if record.notes %}
+
+                                    <span>
+                                        {{ record.notes }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span>
+                                        Attendance record
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <span class="subject-attendance-percentage">
+                                {{ record.percentage }}%
+                            </span>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="subject-attendance-empty">
+
+                <div>
+                    ✓
+                </div>
+
+                <h3>
+                    No attendance data yet.
+                </h3>
+
+                <p>
+                    Start recording attendance for
+                    {{ subject.name }} to calculate
+                    the current percentage.
+                </p>
+
+                <a
+                    href="{{ url_for(
+                        'add_attendance',
+                        subject_id=subject.id
+                    ) }}"
+                >
+                    + Add First Attendance
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- LOWER SECTION -->
+
+    <div class="subject-detail-lower">
+
+
+        <section class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        STUDY ACTIVITY
+                    </span>
+
+                    <h2>
+                        Recent Sessions
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            {% if recent_subject_sessions %}
+
+
+    <div class="subject-study-summary">
+
+        <div>
+
+            <span>
+                This Week
+            </span>
+
+            <strong>
+                {{ subject_week_minutes // 60 }}h
+                {{ subject_week_minutes % 60 }}m
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                All Time
+            </span>
+
+            <strong>
+                {{ subject_total_minutes // 60 }}h
+                {{ subject_total_minutes % 60 }}m
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="subject-study-progress">
+
+        <div class="subject-study-progress-heading">
+
+            <span>
+                Weekly Progress
+            </span>
+
+            <strong>
+                {{ subject_week_progress }}%
+            </strong>
+
+        </div>
+
+
+        <div class="subject-study-progress-track">
+
+            <div
+                class="subject-study-progress-fill"
+                style="width: {{ subject_week_progress }}%;"
+            >
+            </div>
+
+        </div>
+
+
+        <small>
+            {{ subject_week_minutes // 60 }}h
+            {{ subject_week_minutes % 60 }}m
+            of
+            {{ subject_target_minutes // 60 }}h
+            {{ subject_target_minutes % 60 }}m
+        </small>
+
+    </div>
+
+
+
+    <div class="subject-study-session-list">
+
+
+        {% for session in recent_subject_sessions %}
+
+
+            <article class="subject-study-session-row">
+
+
+                <div class="subject-session-date">
+
+                    <strong>
+                        {{ session.study_date.strftime('%d') }}
+                    </strong>
+
+                    <span>
+                        {{ session.study_date.strftime('%b') }}
+                    </span>
+
+                </div>
+
+
+                <div class="subject-session-info">
+
+                    {% if session.notes %}
+
+                        <strong>
+                            {{ session.notes }}
+                        </strong>
+
+                    {% else %}
+
+                        <strong>
+                            Study Session
+                        </strong>
+
+                    {% endif %}
+
+
+                    <span>
+                        {{ session.duration_minutes // 60 }}h
+                        {{ session.duration_minutes % 60 }}m
+                    </span>
+
+                </div>
+
+                <a
+    href="{{ url_for(
+        'edit_study_session',
+        session_id=session.id
+    ) }}"
+    class="subject-task-link"
+>
+    Edit
+</a>
+
+<button
+    type="button"
+    class="subject-session-delete-button"
+    data-delete-url="{{ url_for(
+        'delete_study_session',
+        session_id=session.id
+    ) }}"
+    data-session-subject="{{ subject.name }}"
+    data-session-date="{{ session.study_date.strftime('%d %b %Y') }}"
+>
+    Delete
+</button>
+
+            </article>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+
+    <a
+        href="{{ url_for(
+            'add_study_session',
+            subject_id=subject.id
+        ) }}"
+        class="subject-add-session-link"
+    >
+        + Log Another Session
+    </a>
+
+
+{% else %}
+
+
+    <div class="compact-empty-state">
+
+        <div class="compact-empty-icon">
+            ◷
+        </div>
+
+        <div>
+
+            <strong>
+                No study sessions yet
+            </strong>
+
+            <p>
+                Start logging study time
+                for {{ subject.name }}.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <a
+        href="{{ url_for(
+            'add_study_session',
+            subject_id=subject.id
+        ) }}"
+        class="subject-add-session-link empty"
+    >
+        + Log First Study Session
+    </a>
+
+
+{% endif %}
+
+        </section>
+
+
+
+        <section class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        STUDY PLANNER
+                    </span>
+
+                    <h2>
+                        Subject Tasks
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            {% if subject_tasks %}
+
+    <div class="subject-task-summary">
+
+        <div>
+
+            <span>
+                Pending
+            </span>
+
+            <strong>
+                {{ pending_subject_tasks | length }}
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Overdue
+            </span>
+
+            <strong class="subject-overdue-number">
+                {{ overdue_subject_tasks | length }}
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Completed
+            </span>
+
+            <strong>
+                {{ completed_subject_tasks | length }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="subject-task-list">
+
+
+        <!-- OVERDUE FIRST -->
+
+        {% for task in overdue_subject_tasks %}
+
+            <article class="subject-task-row overdue">
+
+                <div
+                    class="subject-task-priority
+                    priority-{{ task.priority | lower }}"
+                >
+                    {{ task.priority }}
+                </div>
+
+
+                <div class="subject-task-info">
+
+                    <strong>
+                        {{ task.task_name }}
+                    </strong>
+
+                    <span>
+                        Overdue ·
+                        {{ task.deadline.strftime('%d %b %Y') }}
+                    </span>
+
+                </div>
+
+
+                <a
+                    href="{{ url_for(
+                        'edit_task',
+                        task_id=task.id
+                    ) }}"
+                    class="subject-task-link"
+                >
+                    Edit
+                </a>
+
+            </article>
+
+        {% endfor %}
+
+
+
+        <!-- PENDING -->
+
+        {% for task in pending_subject_tasks %}
+
+            <article class="subject-task-row">
+
+                <div
+                    class="subject-task-priority
+                    priority-{{ task.priority | lower }}"
+                >
+                    {{ task.priority }}
+                </div>
+
+
+                <div class="subject-task-info">
+
+                    <strong>
+                        {{ task.task_name }}
+                    </strong>
+
+                    <span>
+                        Due
+                        {{ task.deadline.strftime('%d %b %Y') }}
+                    </span>
+
+                </div>
+
+
+                <a
+                    href="{{ url_for(
+                        'edit_task',
+                        task_id=task.id
+                    ) }}"
+                    class="subject-task-link"
+                >
+                    Edit
+                </a>
+
+            </article>
+
+        {% endfor %}
+
+
+
+        <!-- COMPLETED -->
+
+        {% for task in completed_subject_tasks %}
+
+            <article class="subject-task-row completed">
+
+                <div class="subject-completed-check">
+                    ✓
+                </div>
+
+
+                <div class="subject-task-info">
+
+                    <strong>
+                        {{ task.task_name }}
+                    </strong>
+
+                    <span>
+                        Completed
+                    </span>
+
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+
+    </div>
+
+
+
+    <a
+        href="{{ url_for(
+            'add_task',
+            subject_id=subject.id
+        ) }}"
+        class="subject-add-task-link"
+    >
+        + Add Task for {{ subject.name }}
+    </a>
+
+
+{% else %}
+
+
+    <div class="compact-empty-state">
+
+        <div class="compact-empty-icon">
+            ✓
+        </div>
+
+        <div>
+
+            <strong>
+                No tasks yet
+            </strong>
+
+            <p>
+                Create your first study task
+                for {{ subject.name }}.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <a
+        href="{{ url_for(
+            'add_task',
+            subject_id=subject.id
+        ) }}"
+        class="subject-add-task-link empty"
+    >
+        + Create Subject Task
+    </a>
+
+
+{% endif %}
+
+        </section>
+
+
+
+        <section class="dashboard-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        PRIORITY ANALYSIS
+                    </span>
+
+                    <h2>
+                        Attention Level
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="compact-empty-state">
+
+                <div class="compact-empty-icon attention">
+                    !
+                </div>
+
+                <div>
+
+                    <strong>
+                        Waiting for academic data
+                    </strong>
+
+                    <p>
+                        StudyTrack will calculate priority
+                        once enough information is available.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+</section>
+
+{% endblock %}
